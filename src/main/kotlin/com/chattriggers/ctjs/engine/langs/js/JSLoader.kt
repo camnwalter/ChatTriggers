@@ -9,10 +9,12 @@ import com.chattriggers.ctjs.printTraceToConsole
 import com.chattriggers.ctjs.triggers.OnTrigger
 import com.chattriggers.ctjs.triggers.TriggerType
 import com.chattriggers.ctjs.utils.console.Console
-import dev.falsehonesty.asmhelper.dsl.*
+import dev.falsehonesty.asmhelper.dsl.At
+import dev.falsehonesty.asmhelper.dsl.applyField
+import dev.falsehonesty.asmhelper.dsl.inject
 import dev.falsehonesty.asmhelper.dsl.instructions.InsnListBuilder
+import dev.falsehonesty.asmhelper.dsl.remove
 import dev.falsehonesty.asmhelper.dsl.writers.AccessType
-import dev.falsehonesty.asmhelper.dsl.writers.GeneralModificationWriter
 import org.mozilla.javascript.*
 import org.mozilla.javascript.Function
 import org.mozilla.javascript.commonjs.module.ModuleScriptProvider
