@@ -110,8 +110,6 @@ if (FABRIC) {
 } else {
     minecraft {
         if (FG3) {
-            accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
             runs {
                 client {
                     workingDirectory rootProject.file('run')

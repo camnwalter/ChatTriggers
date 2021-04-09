@@ -4,7 +4,7 @@ import com.chattriggers.ctjs.minecraft.listeners.CancellableEvent
 import com.chattriggers.ctjs.minecraft.listeners.ClientListener
 import com.chattriggers.ctjs.minecraft.wrappers.objects.Entity
 import com.chattriggers.ctjs.triggers.TriggerType
-import com.chattriggers.ctjs.utils.kotlin.BlockPos
+import com.chattriggers.ctjs.utils.kotlin.MCBlockPos
 import dev.falsehonesty.asmhelper.dsl.At
 import dev.falsehonesty.asmhelper.dsl.InjectionPoint
 import dev.falsehonesty.asmhelper.dsl.code.CodeBlock.Companion.iReturn
@@ -47,7 +47,7 @@ fun injectHitBlock() = inject {
     methodMaps = mapOf("func_180511_b" to "clickBlock")
 
     codeBlock {
-        val local1 = shadowLocal<BlockPos>()
+        val local1 = shadowLocal<MCBlockPos>()
         val local2 = shadowLocal<EnumFacing>()
 
         code {
