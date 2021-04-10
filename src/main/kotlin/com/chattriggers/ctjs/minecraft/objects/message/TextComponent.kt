@@ -66,7 +66,7 @@ class TextComponent : MCITextComponent {
     constructor(component: MCITextComponent) {
         this.component = component
 
-        //#if MC==11604
+        //#if MC!=10809
         //$$ val builder = FormattedTextBuilder()
         //$$ component.getComponentWithStyle(builder, Style.EMPTY)
         //$$ text = builder.getString()
@@ -74,7 +74,7 @@ class TextComponent : MCITextComponent {
         text = component.formattedText
         //#endif
 
-        //#if MC==11604
+        //#if MC!=10809
         //$$ val clickEvent = component.style.clickEvent
         //#else
         val clickEvent = component.chatStyle.chatClickEvent
@@ -85,7 +85,7 @@ class TextComponent : MCITextComponent {
             clickValue = clickEvent.value
         }
 
-        //#if MC==11604
+        //#if MC!=10809
         //$$ val hoverEvent = component.style.hoverEvent
         //#else
         val hoverEvent = component.chatStyle.chatHoverEvent
@@ -94,7 +94,7 @@ class TextComponent : MCITextComponent {
         if (hoverEvent != null) {
             hoverAction = hoverEvent.action
 
-            //#if MC==11604
+            //#if MC!=10809
             //$$ hoverValue = hoverEvent.getParameter(hoverAction)
             //#else
             hoverValue = hoverEvent.value
@@ -135,7 +135,7 @@ class TextComponent : MCITextComponent {
 
         val event = ClickEvent(clickAction, clickValue!!.formatIf(formatted))
 
-        //#if MC==11604
+        //#if MC!=10809
         //$$ component.style.clickEvent = event
         //#else
         component.chatStyle.chatClickEvent = event
@@ -146,7 +146,7 @@ class TextComponent : MCITextComponent {
         if (hoverAction == null || hoverValue == null)
             return
 
-        //#if MC==11604
+        //#if MC!=10809
         //$$ val action: HoverEvent.Action<MCITextComponent> = hoverAction!! as HoverEvent.Action<MCITextComponent>
         //$$ val value: MCITextComponent = MCStringTextComponent(hoverValue!! as String)
         //$$ val event = HoverEvent<MCITextComponent>(action, value)
@@ -160,7 +160,7 @@ class TextComponent : MCITextComponent {
     }
 
     private fun setHoverEventHelper(event: HoverEvent) {
-        //#if MC==11604
+        //#if MC!=10809
         //$$ component.style.hoverEvent = event
         //#else
         component.chatStyle.chatHoverEvent = event
@@ -170,7 +170,7 @@ class TextComponent : MCITextComponent {
     private fun String.formatIf(predicate: Boolean) = if (predicate) ChatLib.addColor(this) else this
 
 
-    //#if MC==11604
+    //#if MC!=10809
     //$$ class StyledStringAcceptor : IStyledTextAcceptor<Any> {
     //$$     private val builder = FormattedTextBuilder()
     //$$
@@ -230,7 +230,7 @@ class TextComponent : MCITextComponent {
     // * METHOD DELEGATIONS *
     // **********************
 
-    //#if MC==11604
+    //#if MC!=10809
     //$$ fun appendSibling(component: ITextComponent) {
     //$$     siblings.add(component)
     //$$ }
@@ -303,7 +303,7 @@ class TextComponent : MCITextComponent {
         }
 
         fun stripFormatting(string: String): String {
-            //#if MC==11604
+            //#if MC!=10809
             //$$ return TextFormatting.getTextWithoutFormattingCodes(string)!!
             //#else
             return EnumChatFormatting.getTextWithoutFormattingCodes(string)

@@ -10,9 +10,10 @@ import com.chattriggers.ctjs.utils.kotlin.MCITextComponent
 import com.chattriggers.ctjs.utils.kotlin.MCStringTextComponent
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 
-//#if MC==11604
+//#if MC!=10809
 //$$ import net.minecraft.util.text.ChatType
 //$$ import net.minecraft.util.IReorderingProcessor
+//$$ import net.minecraftforge.event.RegisterCommandsEvent
 //#endif
 
 @External
@@ -63,7 +64,7 @@ class Message {
      */
     constructor(vararg components: Any) : this(ArrayList(components.asList()))
 
-    //#if MC==11604
+    //#if MC!=10809
     //$$ internal constructor(processor: IReorderingProcessor) {
     //$$     val consumer = TextComponent.StyledCharacterConsumer()
     //$$     processor.accept(consumer)

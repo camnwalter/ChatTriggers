@@ -16,7 +16,7 @@ import org.mozilla.javascript.NativeObject
 import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
-//#if MC==11604
+//#if MC!=10809
 //$$ import com.chattriggers.ctjs.launch.plugin.INewChatGuiAccessor
 //#endif
 

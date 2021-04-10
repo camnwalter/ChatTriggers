@@ -5,20 +5,19 @@ import com.chattriggers.ctjs.minecraft.wrappers.objects.Entity
 import com.chattriggers.ctjs.minecraft.wrappers.objects.Particle
 import com.chattriggers.ctjs.minecraft.wrappers.objects.PlayerMP
 import com.chattriggers.ctjs.minecraft.wrappers.objects.block.Block
-import com.chattriggers.ctjs.utils.kotlin.MCBlockPos
-import com.chattriggers.ctjs.utils.kotlin.External
-import com.chattriggers.ctjs.utils.kotlin.MCParticle
-import net.minecraft.client.multiplayer.WorldClient
+import com.chattriggers.ctjs.utils.kotlin.*
+
+//#if MC==10809
 import net.minecraft.client.renderer.RenderGlobal
 import net.minecraft.util.EnumParticleTypes
 import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.jvm.isAccessible
 
-//#if MC>=11202
+//#else
 //$$ import net.minecraft.util.ResourceLocation
-//$$ import net.minecraft.util.SoundEvent
-//$$ import kotlin.reflect.jvm.isAccessible
-//$$
+//$$ import net.minecraft.util.SoundCategory
+//$$ import net.minecraft.world.server.ServerWorld
+//$$ import net.minecraftforge.registries.ForgeRegistries
 //#endif
 
 @External
@@ -29,11 +28,11 @@ object World {
      * @return The Minecraft WorldClient object
      */
     @JvmStatic
-    fun getWorld(): WorldClient? {
+    fun getWorld(): MCWorld? {
         //#if MC<=10809
         return Client.getMinecraft().theWorld
         //#else
-        //$$ return Client.getMinecraft().world;
+        //$$ return Client.getMinecraft().world
         //#endif
     }
 
@@ -52,8 +51,9 @@ object World {
         //#if MC<=10809
         Player.getPlayer()?.playSound(name, volume, pitch)
         //#else
-        //$$ val sound = SoundEvent.REGISTRY.getObject(ResourceLocation("minecraft", name));
-        //$$ Player.getPlayer()?.playSound(sound, volume, pitch);
+        //$$ val sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation("minecraft", name))
+        //$$     ?: throw IllegalArgumentException("Unknown sound resource: \"minecraft:$name\"")
+        //$$ Player.getPlayer()?.playSound(sound, volume, pitch)
         //#endif
     }
 
@@ -71,8 +71,10 @@ object World {
         //#if MC<=10809
         getWorld()?.playRecord(MCBlockPos(x, y, z), name)
         //#else
-        //$$ val sound = SoundEvent.REGISTRY.getObject(ResourceLocation("minecraft", name))
-        //$$ getWorld()?.playRecord(MCBlockPos(x, y, z), sound)
+        //$$ val sound = ForgeRegistries.SOUND_EVENTS.getValue(ResourceLocation("minecraft", name))
+        //$$     ?: throw IllegalArgumentException("Unknown sound resource: \"minecraft:$name\"")
+        //$$ // TODO: Does 1.8.9 have distance delay here?
+        //$$ getWorld()?.playSound(x, y, z, sound, SoundCategory.MASTER, 1f, 1f, true)
         //#endif
     }
 
@@ -83,7 +85,13 @@ object World {
     fun getRainingStrength(): Float = getWorld()?.rainingStrength ?: -1f
 
     @JvmStatic
-    fun getTime(): Long = getWorld()?.worldTime ?: -1L
+    fun getTime(): Long {
+        //#if MC==10809
+        return getWorld()?.worldTime ?: -1L
+        //#else
+        //$$ return getWorld()?.gameTime ?: -1L
+        //#endif
+    }
 
     @JvmStatic
     fun getDifficulty(): String = getWorld()?.difficulty.toString()
@@ -92,14 +100,21 @@ object World {
     fun getMoonPhase(): Int = getWorld()?.moonPhase ?: -1
 
     @JvmStatic
-    fun getSeed(): Long = getWorld()?.seed ?: -1L
+    fun getSeed(): Long {
+        //#if MC==10809
+        return getWorld()?.seed ?: -1L
+        //#else
+        //$$ return (Player.getPlayer()?.world as? ServerWorld)?.seed ?: -1L
+        //#endif
+    }
 
+    // TODO: Wrap this
     @JvmStatic
     fun getType(): String {
         //#if MC<=10809
         return getWorld()?.worldType?.worldTypeName.toString()
         //#else
-        //$$ return getWorld()?.worldType?.name.toString();
+        //$$ return ""
         //#endif
     }
 
@@ -125,9 +140,13 @@ object World {
      * @return the players
      */
     @JvmStatic
-    fun getAllPlayers(): List<PlayerMP> = getWorld()?.playerEntities?.map {
-        PlayerMP(it)
-    } ?: listOf()
+    fun getAllPlayers(): List<PlayerMP> {
+        //#if MC==10809
+        return getWorld()?.playerEntities?.map(::PlayerMP) ?: listOf()
+        //#else
+        //$$ return getWorld()?.allEntities?.map(::PlayerMP) ?: listOf()
+        //#endif
+    }
 
     /**
      * Gets a player by their username, must be in the currently loaded chunks!
@@ -137,26 +156,45 @@ object World {
      */
     @JvmStatic
     fun getPlayerByName(name: String): PlayerMP? {
+        //#if MC==10809
         return getWorld()?.getPlayerEntityByName(name)?.let(::PlayerMP)
+        //#else
+        // TODO(1.16)
+        //$$ return null
+        //#endif
     }
 
     @JvmStatic
-    fun hasPlayer(name: String): Boolean = getWorld()?.getPlayerEntityByName(name) != null
+    fun hasPlayer(name: String): Boolean {
+        //#if MC==10809
+        return getWorld()?.getPlayerEntityByName(name) != null
+        //#else
+        // TODO(1.16)
+        //$$ return false
+        //#endif
+    }
 
     @JvmStatic
     fun getChunk(x: Int, y: Int, z: Int): Chunk {
+        //#if MC==10809
         return Chunk(
             getWorld()!!.getChunkFromBlockCoords(
                 MCBlockPos(x, y, z)
             )
         )
+        //#else
+        //$$ getWorld()!!.getChunk(MCBlockPos(x, y, z))
+        //$$ return Chunk(getWorld()!!.getChunk(MCBlockPos(x, y, z)) as MCChunk)
+        //#endif
     }
 
     @JvmStatic
     fun getAllEntities(): List<Entity> {
-        return getWorld()?.loadedEntityList?.map {
-            Entity(it)
-        } ?: listOf()
+        //#if MC==10809
+        return getWorld()?.loadedEntityList?.map(::Entity) ?: listOf()
+        //#else
+        //$$ return getWorld()?.allEntities?.map(::Entity) ?: listOf()
+        //#endif
     }
 
     /**
@@ -167,9 +205,7 @@ object World {
      */
     @JvmStatic
     fun getAllEntitiesOfType(clazz: Class<*>): List<Entity> {
-        return getAllEntities().filter {
-            it.entity.javaClass == clazz
-        }
+        return getAllEntities().filter { it.entity.javaClass == clazz }
     }
 
     /**
@@ -227,7 +263,9 @@ object World {
          * @return the spawn x location.
          */
         @JvmStatic
-        fun getX(): Int = getWorld()!!.spawnPoint.x
+        fun getX(): Int {
+            return getWorld()!!.worldInfo.spawnX
+        }
 
         /**
          * Gets the spawn y location.
@@ -235,7 +273,9 @@ object World {
          * @return the spawn y location.
          */
         @JvmStatic
-        fun getY(): Int = getWorld()!!.spawnPoint.y
+        fun getY(): Int {
+            return getWorld()!!.worldInfo.spawnY
+        }
 
         /**
          * Gets the spawn z location.
@@ -243,7 +283,9 @@ object World {
          * @return the spawn z location.
          */
         @JvmStatic
-        fun getZ(): Int = getWorld()!!.spawnPoint.z
+        fun getZ(): Int {
+            return getWorld()!!.worldInfo.spawnZ
+        }
     }
 
     object particle {
@@ -254,9 +296,14 @@ object World {
          * @return the array of name strings
          */
         @JvmStatic
-        fun getParticleNames(): List<String> = EnumParticleTypes.values().map {
-            it.name
-        }.toList()
+        fun getParticleNames(): List<String> {
+            //#if MC==10809
+            return EnumParticleTypes.values().map { it.name }.toList()
+            //#else
+            // TODO
+            //$$ return listOf()
+            //#endif
+        }
 
         /**
          * Spawns a particle into the world with the given attributes,
@@ -281,6 +328,7 @@ object World {
             ySpeed: Double,
             zSpeed: Double
         ): Particle? {
+            //#if MC==10809
             val particleType = EnumParticleTypes.valueOf(particle)
 
             val fx = RenderGlobal::class.declaredMemberFunctions.firstOrNull {
@@ -298,11 +346,11 @@ object World {
             /*val method = ReflectionHelper.findMethod(
                     RenderGlobal::class.java,
                     //#if MC<=10809
-                    Client.getMinecraft().renderGlobal,
-                    arrayOf("spawnEntityFX", "func_174974_b"),
+                    //$$ Client.getMinecraft().renderGlobal,
+                    //$$ arrayOf("spawnEntityFX", "func_174974_b"),
                     //#else
-                    //$$ "spawnEntityFX",
-                    //$$ "func_174974_b",
+                    "spawnEntityFX",
+                    "func_174974_b",
                     //#endif
                     Int::class.javaPrimitiveType,
                     Boolean::class.javaPrimitiveType,
@@ -322,11 +370,19 @@ object World {
             ) as MCParticle*/
 
             return Particle(fx)
+            //#else
+            //$$ // TODO
+            //$$ return null
+            //#endif
         }
 
         @JvmStatic
         fun spawnParticle(particle: MCParticle) {
+            //#if MC==10809
             Client.getMinecraft().effectRenderer.addEffect(particle)
+            //#else
+            //$$ Client.getMinecraft().particles.addEffect(particle)
+            //#endif
         }
     }
 }

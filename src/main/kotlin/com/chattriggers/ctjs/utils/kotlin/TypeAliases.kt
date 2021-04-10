@@ -7,7 +7,7 @@ typealias MCEntity = net.minecraft.entity.Entity
 typealias MCPotionEffect = net.minecraft.potion.PotionEffect
 typealias MCTessellator = net.minecraft.client.renderer.Tessellator
 
-//#if MC==11604
+//#if MC!=10809
 //$$ typealias MCITextComponent = net.minecraft.util.text.ITextComponent
 //$$ typealias MCClickEvent = net.minecraft.util.text.event.ClickEvent
 //$$ typealias MCHoverEvent = net.minecraft.util.text.event.HoverEvent

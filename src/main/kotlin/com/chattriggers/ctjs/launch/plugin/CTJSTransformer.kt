@@ -44,7 +44,7 @@ class CTJSTransformer : BaseClassTransformer() {
             // TODO: Investigate
 //            injectPlayerControllerMP()
 
-            //#if MC==11604
+            //#if MC!=10809
             //$$ setupNewChatGuiAccessor()
             //$$ setupCommandDispatcherAccessor()
             //#endif

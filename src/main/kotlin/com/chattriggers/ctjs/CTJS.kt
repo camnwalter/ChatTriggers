@@ -2,7 +2,7 @@ package com.chattriggers.ctjs
 
 import com.chattriggers.ctjs.commands.CTCommand
 import com.chattriggers.ctjs.engine.module.ModuleManager
-import com.chattriggers.ctjs.loader.UriScheme
+import com.chattriggers.ctjs.engine.loader.UriScheme
 import com.chattriggers.ctjs.minecraft.libs.FileLib
 import com.chattriggers.ctjs.minecraft.listeners.ChatListener
 import com.chattriggers.ctjs.minecraft.listeners.ClientListener
@@ -15,7 +15,6 @@ import com.chattriggers.ctjs.triggers.TriggerType
 import com.chattriggers.ctjs.utils.UpdateChecker
 import com.chattriggers.ctjs.utils.config.Config
 import com.google.gson.JsonParser
-import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import org.apache.commons.codec.digest.DigestUtils
@@ -24,12 +23,16 @@ import java.io.FileReader
 import kotlin.concurrent.thread
 
 //#if MC==18090
+import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 //#else
 //$$ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 //$$ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 //$$ import net.minecraftforge.eventbus.api.SubscribeEvent
+//$$ import com.mojang.brigadier.CommandDispatcher
+//$$ import net.minecraft.command.CommandSource
+//$$ import net.minecraftforge.event.RegisterCommandsEvent
 //#endif
 
 @Mod(
@@ -43,7 +46,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
     //#endif
 )
 class CTJSMod {
-    //#if MC==11605
+    //#if MC!=10809
+    //$$
     //$$ init {
     //$$     FMLJavaModLoadingContext.get().modEventBus.addListener { e: FMLCommonSetupEvent ->
     //$$         preInit()
@@ -53,6 +57,7 @@ class CTJSMod {
     //$$
     //$$ @SubscribeEvent
     //$$ fun registerCommands(event: RegisterCommandsEvent) {
+    //$$     CTJS.commandDispatcher = event.dispatcher
     //$$     CTCommand.register(event.dispatcher)
     //$$ }
     //#endif
@@ -107,6 +112,10 @@ object CTJS {
     val configLocation = File("./config")
     val assetsDir = File(configLocation, "ChatTriggers/images/").apply { mkdirs() }
     val sounds = mutableListOf<Sound>()
+
+    //#if MC!=10809
+    //$$ lateinit var commandDispatcher: CommandDispatcher<CommandSource?>
+    //#endif
 
     fun saveConfig() = Config.save(File(this.configLocation, "ChatTriggers.json"))
 

@@ -1,5 +1,7 @@
 package com.chattriggers.ctjs.commands
 
+import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.CTJSMod
 import com.chattriggers.ctjs.triggers.OnTrigger
 
 //#if MC==10809
@@ -51,44 +53,48 @@ class Command(
 
     @Throws(CommandException::class)
     override fun processCommand(sender: ICommandSender, args: Array<String>) = trigger(args)
-    //#else
-    //$$ internal lateinit var commandNode: CommandNode<CommandSource?>
-    //$$
-    //$$ fun register(dispatcher: CommandDispatcher<CommandSource?>) {
-    //$$     fun execute(context: CommandContext<CommandSource>): Int {
-    //$$         val args = context.nodes.map {
-    //$$             context.input.substring(it.range.start, it.range.end)
-    //$$         }.toTypedArray()
-    //$$         triggers.forEach { it.trigger(args) }
-    //$$         return 1
-    //$$     }
-    //$$
-    //$$     var command = Commands.literal(name)
-    //$$
-    //$$     for (option in tabCompletionOptions) {
-    //$$         command = command.then(Commands.argument(
-    //$$             option,
-    //$$             StringArgumentType.greedyString()
-    //$$         )).executes(::execute)
-    //$$     }
-    //$$
-    //$$     commandNode = dispatcher.register(command.executes(::execute))
-    //$$ }
     //#endif
 
-    private fun trigger(args: Array<String>) {
-        triggers.forEach { it.trigger(args) }
-    }
-
     fun register() {
-        ClientCommandHandler.instance.registerCommand(this)
         activeCommands[name] = this
+
+        //#if MC==10809
+        ClientCommandHandler.instance.registerCommand(this)
+        //#else
+        //$$ fun execute(context: CommandContext<CommandSource>): Int {
+        //$$     val args = context.nodes.map {
+        //$$         context.input.substring(it.range.start, it.range.end)
+        //$$     }.toTypedArray()
+        //$$     triggers.forEach { it.trigger(args) }
+        //$$     return 1
+        //$$ }
+        //$$
+        //$$ var command = Commands.literal(name)
+        //$$
+        //$$ for (option in tabCompletionOptions) {
+        //$$     command = command.then(Commands.argument(
+        //$$         option,
+        //$$         StringArgumentType.greedyString()
+        //$$     )).executes(::execute)
+        //$$ }
+        //$$
+        //$$ CTJS.commandDispatcher.register(command.executes(::execute))
+        //#endif
     }
 
     fun unregister() {
+        activeCommands.remove(name)
+
+        //#if MC==10809
         ClientCommandHandler.instance.commandSet.remove(this)
         ClientCommandHandler.instance.commandMap.remove(name)
-        activeCommands.remove(name)
+        //#else
+        //$$ CTJS.commandDispatcher.root.children.removeIf { it.name == name }
+        //#endif
+    }
+
+    private fun trigger(args: Array<String>) {
+        triggers.forEach { it.trigger(args) }
     }
 
     companion object {

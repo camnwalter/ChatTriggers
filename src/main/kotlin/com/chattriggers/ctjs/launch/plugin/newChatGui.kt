@@ -1,6 +1,6 @@
 package com.chattriggers.ctjs.launch.plugin
 
-//#if MC==11604
+//#if MC!=10809
 //$$ import com.chattriggers.ctjs.utils.kotlin.MCITextComponent
 //$$ import dev.falsehonesty.asmhelper.dsl.instructions.InsnListBuilder
 //$$ import dev.falsehonesty.asmhelper.dsl.modify

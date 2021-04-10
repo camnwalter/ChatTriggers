@@ -1,15 +1,20 @@
-package com.chattriggers.ctjs.loader;
+package com.chattriggers.ctjs.engine.loader;
 
 import com.chattriggers.ctjs.Reference;
 import com.chattriggers.ctjs.engine.module.ModuleManager;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.stream.Collectors;
+
+//#if MC==10809
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+//#else
+//$$ import net.minecraftforge.fml.ModList;
+//#endif
 
 public class UriScheme {
     private static final String PROTOCOL = "chattriggers://";
@@ -57,13 +62,17 @@ public class UriScheme {
                             quote("")
             );
 
+            //#if MC==10809
             ModContainer container = Loader.instance().getIndexedModList().get(Reference.MODID);
             String modJar = container.getSource().getAbsolutePath();
+            //#else
+            //$$ String modJar = ModList.get().getModFileById(Reference.MODID).getFile().getFilePath().toString();
+            //#endif
             String sep = File.separator;
             String javaProgram = System.getProperty("java.home") + sep + "bin" + sep + "javaw.exe";
 
             String value = ("\"" + javaProgram + "\" -cp \"" + modJar
-                    + "\" com.chattriggers.ctjs.loader.UriScheme " + "\"%1\"").replace("\"", "\\\"");
+                    + "\" com.chattriggers.ctjs.engine.loader.UriScheme " + "\"%1\"").replace("\"", "\\\"");
 
             regAdd(
                     "\\shell\\open\\command /f /ve /d " +
