@@ -5,107 +5,166 @@ import com.chattriggers.ctjs.minecraft.libs.renderer.Rectangle
 import com.chattriggers.ctjs.minecraft.libs.renderer.Renderer
 import com.chattriggers.ctjs.minecraft.libs.renderer.Text
 import com.chattriggers.ctjs.minecraft.wrappers.Client
-import net.minecraft.client.gui.GuiTextField
+import com.chattriggers.ctjs.utils.kotlin.MCStringTextComponent
 import java.io.File
 import kotlin.properties.Delegates
 import kotlin.reflect.KMutableProperty
 
-class ConfigString
-    (private val prop: KMutableProperty<String>, override val name: String = "", x: Int = 0, y: Int = 0) :
-    ConfigOption() {
+//#if MC==10809
+import net.minecraft.client.gui.GuiTextField
+//#else
+//$$ import com.mojang.blaze3d.matrix.MatrixStack
+//$$ import net.minecraft.client.gui.widget.TextFieldWidget
+//$$ import net.minecraft.client.gui.widget.Widget
+//#endif
 
+class ConfigString(
+    private val prop: KMutableProperty<String>,
+    name: String = "",
+    x: Int = 0,
+    y: Int = 0
+) : ConfigOption(name, x, y) {
     private var value: String by Delegates.observable(prop.getter.call(Config)) { _, _, new ->
         prop.setter.call(Config, new)
     }
     private val initial = value
 
-    private lateinit var textField: GuiTextField
+    //#if MC==10809
+    private val textField = GuiTextField(
+        0,
+        Renderer.getFontRenderer(),
+        Renderer.screen.getWidth() / 2 - 100 + x,
+        y + 15,
+        200,
+        20
+    )
+    //#else
+    //$$ private val textField = TextFieldWidget(
+    //$$     Renderer.getFontRenderer(),
+    //$$     Renderer.screen.getWidth() / 2 - 100 + x,
+    //$$     y + 15,
+    //$$     200,
+    //$$     20,
+    //$$     MCStringTextComponent("")
+    //$$ )
+    //#endif
+
     private var systemTime: Long = 0
     private var isValid: Boolean = false
     var isDirectory: Boolean
 
     private val isValidColor: String
-        get() = if (this.isValid) ChatLib.addColor("&a") else ChatLib.addColor("&c")
+        get() = if (isValid) ChatLib.addColor("&a") else ChatLib.addColor("&c")
 
     init {
-        this.x = x
-        this.y = y
-        this.systemTime = Client.getSystemTime()
-        this.isValid = true
-        this.isDirectory = false
+        systemTime = Client.getSystemTime()
+        isValid = true
+        isDirectory = false
+
+        updateValidDirectory(value)
+
+        //#if MC==10809
+        //$$ textField.maxStringLength = 100
+        //#else
+        textField.setMaxStringLength(100)
+        //#endif
+        textField.text = isValidColor + value
     }
 
     private fun updateValidDirectory(directory: String) {
-        this.isValid = !this.isDirectory || File(directory).isDirectory
+        isValid = !isDirectory || File(directory).isDirectory
     }
 
-    override fun init() {
-        super.init()
-
-        updateValidDirectory(this.value)
-        this.textField = GuiTextField(
-            0, Renderer.getFontRenderer(),
-            Renderer.screen.getWidth() / 2 - 100 + this.x, this.y + 15,
-            200, 20
-        )
-        this.textField.maxStringLength = 100
-        this.textField.text = isValidColor + this.value
-    }
-
-    override fun draw(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        if (this.hidden) return
+    //#if MC==10809
+     override fun draw(mouseX: Int, mouseY: Int, partialTicks: Float) {
+         super.draw(mouseX, mouseY, partialTicks)
+    //#else
+    //$$ override fun render(matrixStack: MatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
+    //$$     super.render(matrixStack, mouseX, mouseY, partialTicks)
+    //#endif
+        if (hidden)
+            return
 
         update()
 
         val middle = Renderer.screen.getWidth() / 2
 
-        Rectangle(-0x80000000, (middle - 105 + this.x).toFloat(), (this.y - 5).toFloat(), 210f, 45f)
+        Rectangle(-0x80000000, (middle - 105 + x).toFloat(), (y - 5).toFloat(), 210f, 45f)
             .setShadow(-0x30000000, 3f, 3f)
             .draw()
-        Text(this.name, (middle - 100 + this.x).toFloat(), this.y.toFloat()).draw()
+        Text(name, (middle - 100 + x).toFloat(), y.toFloat()).draw()
 
-        //#if MC<=10809
-        this.textField.xPosition = middle - 100 + this.x
+        //#if MC==10809
+        textField.xPosition = middle - 100 + x
+        textField.drawTextBox()
         //#else
-        //$$ this.textField.x = middle - 100 + this.x
+        //$$ textField.x = middle - 100 + x
+        //$$ textField.render(matrixStack, mouseX, mouseY, partialTicks)
         //#endif
-
-        this.textField.drawTextBox()
-
-        super.draw(mouseX, mouseY, partialTicks)
     }
 
     private fun update() {
-        while (this.systemTime < Client.getSystemTime() + 50) {
-            this.systemTime += 50
-            this.textField.updateCursorCounter()
+        while (systemTime < Client.getSystemTime() + 50) {
+            systemTime += 50
+            //#if MC==10809
+            textField.updateCursorCounter()
+            //#else
+            //$$ textField.tick()
+            //#endif
         }
     }
 
+    //#if MC==10809
     override fun mouseClicked(mouseX: Int, mouseY: Int) {
-        if (this.hidden) return
+        if (hidden)
+            return
 
-        this.textField.mouseClicked(mouseX, mouseY, 0)
+        textField.mouseClicked(mouseX, mouseY, 0)
 
-        if (this.resetButton.mousePressed(Client.getMinecraft(), mouseX, mouseY)) {
-            this.value = this.initial
-            this.textField.text = isValidColor + this.value
-            this.resetButton.playPressSound(Client.getMinecraft().soundHandler)
+        if (resetButton.mousePressed(Client.getMinecraft(), mouseX, mouseY)) {
+            value = initial
+            textField.text = isValidColor + value
+            resetButton.playPressSound(Client.getMinecraft().soundHandler)
         }
     }
+    //#else
+    //$$ override fun onReset() {
+    //$$     if (hidden)
+    //$$         return
+    //$$
+    //$$     value = initial
+    //$$     textField.text = isValidColor + value
+    //$$ }
+    //$$
+    //$$ override fun getWidgets(): List<Widget> = super.getWidgets() + listOf(textField)
+    //#endif
 
+    //#if MC==10809
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        if (this.hidden) return
+    //#else
+    //$$ override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int) {
+    //$$     if (hidden || !textField.isFocused)
+    //$$         return
+    //$$
+    //$$     textField.keyReleased(keyCode, scanCode, modifiers)
+    //$$ }
+    //$$
+    //$$ override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int) {
+    //#endif
+        if (hidden || !textField.isFocused)
+            return
 
-        if (this.textField.isFocused) {
-            this.textField.textboxKeyTyped(typedChar, keyCode)
+        //#if MC==10809
+        textField.textboxKeyTyped(typedChar, keyCode)
+        //#else
+        //$$ textField.keyPressed(keyCode, scanCode, modifiers)
+        //#endif
 
-            val text = ChatLib.removeFormatting(this.textField.text)
-            updateValidDirectory(text)
-            this.textField.text = isValidColor + text
+        val text = ChatLib.removeFormatting(textField.text)
+        updateValidDirectory(text)
+        textField.text = isValidColor + text
 
-            if (this.isValid)
-                this.value = text
-        }
+        if (isValid)
+            value = text
     }
 }

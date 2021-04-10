@@ -3,55 +3,74 @@ package com.chattriggers.ctjs.utils.config
 import com.chattriggers.ctjs.minecraft.libs.renderer.Renderer
 import com.chattriggers.ctjs.minecraft.libs.renderer.Text
 import com.chattriggers.ctjs.minecraft.wrappers.Client
-import net.minecraft.client.gui.GuiButton
+import com.chattriggers.ctjs.utils.kotlin.MCButton
+import com.chattriggers.ctjs.utils.kotlin.MCStringTextComponent
 
-abstract class ConfigOption {
-    abstract val name: String
+//#if MC!=10809
+//$$ import com.mojang.blaze3d.matrix.MatrixStack
+//$$ import net.minecraft.client.gui.widget.Widget
+//$$ import net.minecraft.client.gui.widget.button.Button
 
-    protected var x: Int = 0
-    protected var y: Int = 0
+//#endif
+
+abstract class ConfigOption(
+    val name: String,
+    var x: Int,
+    var y: Int
+) {
     var hidden: Boolean = false
 
-    internal var resetButton = GuiButton(
+    val text = Text("\u21BA", (Renderer.screen.getWidth() / 2 - 100 + x + 189).toFloat(), (y - 4).toFloat())
+        .setScale(2f)
+        .setColor(-0x1)
+        .setShadow(true)
+
+    //#if MC==10809
+    protected val resetButton = MCButton(
         0,
-        Renderer.screen.getWidth() / 2 - 100 + this.x + 185,
-        this.y - 2,
+        Renderer.screen.getWidth() / 2 - 100 + x + 185,
+        y - 2,
         14, 12, ""
     )
+    //#else
+    //$$ protected val resetButton = MCButton(
+    //$$     Renderer.screen.getWidth() / 2 - 100 + x + 185,
+    //$$     y - 2,
+    //$$     200,
+    //$$     20,
+    //$$     MCStringTextComponent(""),
+    //$$     Button.IPressable { onReset() }
+    //$$ )
+    //#endif
 
-    open fun init() {
-        this.resetButton = GuiButton(
-            0,
-            Renderer.screen.getWidth() / 2 - 100 + this.x + 185, this.y - 2,
-            14, 12, ""
-        )
-    }
-
+    //#if MC==10809
     open fun draw(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        //#if MC<=10809
-        this.resetButton.xPosition = Renderer.screen.getWidth() / 2 - 100 + this.x + 185
-        //#else
-        //$$ this.resetButton.x = Renderer.screen.getWidth() / 2 - 100 + this.x + 185;
+        resetButton.xPosition = Renderer.screen.getWidth() / 2 - 100 + x + 185
+        resetButton.drawButton(Client.getMinecraft(), mouseX, mouseY)
+    //#else
+    //$$ open fun render(matrixStack: MatrixStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
+    //$$     resetButton.x = Renderer.screen.getWidth() / 2 - 100 + x + 185
+    //$$     resetButton.render(matrixStack, mouseX, mouseY, partialTicks)
+    //#endif
         //#endif
 
-        //#if MC<=10809
-        this.resetButton.drawButton(Client.getMinecraft(), mouseX, mouseY)
-        //#else
-        //$$ this.resetButton.drawButton(Client.getMinecraft(), mouseX, mouseY, partialTicks);
-        //#endif
-
-        Text("\u21BA", (Renderer.screen.getWidth() / 2 - 100 + this.x + 189).toFloat(), (this.y - 4).toFloat())
-            .setScale(2f)
-            .setColor(-0x1)
-            .setShadow(true)
-            .draw()
+        text.setX((Renderer.screen.getWidth() / 2 - 100 + x + 189).toFloat()).draw()
     }
 
+    //#if MC==10809
     abstract fun mouseClicked(mouseX: Int, mouseY: Int)
-    open fun mouseReleased() {}
-    open fun keyTyped(typedChar: Char, keyCode: Int) {}
+    //#else
+    //$$ abstract fun onReset()
+    //$$
+    //$$ open fun getWidgets(): List<Widget> = listOf(resetButton)
+    //#endif
 
-    enum class Type {
-        STRING, STRING_SELECTOR, COLOR, BOOLEAN
-    }
+    open fun mouseReleased() {}
+
+    //#if MC==10809
+    open fun keyTyped(typedChar: Char, keyCode: Int) {}
+    //#else
+    //$$ open fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int) {}
+    //$$ open fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int) {}
+    //#endif
 }
