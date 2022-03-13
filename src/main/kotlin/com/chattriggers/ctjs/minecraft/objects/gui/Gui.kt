@@ -31,6 +31,10 @@ abstract class Gui : GuiScreen() {
             if (isOpen())
                 onScroll?.trigger(arrayOf(x, y, delta))
         }
+        MouseListener.registerDraggedListener { deltaX, deltaY, x, y, button ->
+            if (isOpen())
+                onMouseDragged?.trigger(arrayOf(deltaX, deltaY, x, y, button))
+        }
     }
 
     fun open() {
@@ -113,10 +117,11 @@ abstract class Gui : GuiScreen() {
      * Registers a method to be run while gui is open.
      * Registered method runs on key input.
      * Arguments passed through to method:
-     * - int mouseX
-     * - int mouseY
+     * - double deltaX
+     * - double deltaY
+     * - double mouseX
+     * - double mouseY
      * - int clickedMouseButton
-     * - long timeSinceLastClick
      *
      * @param method the method to run
      * @return the trigger
@@ -178,14 +183,6 @@ abstract class Gui : GuiScreen() {
     override fun actionPerformed(button: GuiButton) {
         super.actionPerformed(button)
         onActionPerformed?.trigger(arrayOf(button.id))
-    }
-
-    /**
-     * Internal method to run trigger. Not meant for public use
-     */
-    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
-        onMouseDragged?.trigger(arrayOf(mouseX, mouseY, clickedMouseButton, timeSinceLastClick))
     }
 
     /**
