@@ -170,10 +170,6 @@ open class Entity(val entity: MCEntity) {
      */
     fun getAir(): Int = entity.air
 
-    fun setAir(air: Int) = apply {
-        entity.air = air
-    }
-
     fun distanceTo(other: Entity): Float = distanceTo(other.entity)
 
     fun distanceTo(other: MCEntity): Float = entity.getDistanceToEntity(other)
@@ -214,39 +210,11 @@ open class Entity(val entity: MCEntity) {
 
     fun getDimension() = entity.dimension
 
-    fun setPosition(x: Double, y: Double, z: Double) = apply {
-        entity.setPosition(x, y, z)
-    }
-
-    fun setAngles(yaw: Float, pitch: Float) = apply {
-        entity.setAngles(yaw, pitch)
-    }
-
     fun getMaxInPortalTime() = entity.maxInPortalTime
-
-    fun setOnFire(seconds: Int) = apply {
-        entity.setFire(seconds)
-    }
-
-    fun extinguish() = apply {
-        entity.extinguish()
-    }
-
-    fun move(x: Double, y: Double, z: Double) = apply {
-        entity.moveEntity(x, y, z)
-    }
 
     fun isSilent() = entity.isSilent
 
-    fun setIsSilent(silent: Boolean) = apply {
-        entity.isSilent = silent
-    }
-
     fun isInLava() = entity.isInLava
-
-    fun addVelocity(x: Double, y: Double, z: Double) = apply {
-        entity.addVelocity(x, y, z)
-    }
 
     fun getLookVector(partialTicks: Float): Vec3 = entity.getLook(partialTicks)
 
@@ -256,37 +224,15 @@ open class Entity(val entity: MCEntity) {
 
     fun canBePushed() = entity.canBePushed()
 
-    fun dropItem(item: Item, size: Int) = entity.dropItem(item.item, size)
-
     fun isSneaking() = entity.isSneaking
-
-    fun setIsSneaking(sneaking: Boolean) = apply {
-        entity.isSneaking = sneaking
-    }
 
     fun isSprinting() = entity.isSprinting
 
-    fun setIsSprinting(sprinting: Boolean) = apply {
-        entity.isSprinting = sprinting
-    }
-
     fun isInvisible() = entity.isInvisible
-
-    fun setIsInvisible(invisible: Boolean) = apply {
-        entity.isInvisible = invisible
-    }
 
     fun isEating() = entity.isEating
 
-    fun setIsEating(eating: Boolean) = apply {
-        entity.isEating = eating
-    }
-
     fun isOutsideBorder() = entity.isOutsideBorder
-
-    fun setIsOutsideBorder(outside: Boolean) = apply {
-        entity.isOutsideBorder = outside
-    }
 
     fun isBurning(): Boolean = entity.isBurning
 
