@@ -2,6 +2,7 @@ package com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt
 
 import com.chattriggers.ctjs.utils.kotlin.MCNBTBase
 import com.chattriggers.ctjs.utils.kotlin.MCNBTTagCompound
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagList
 import net.minecraft.nbt.NBTTagByteArray
 import net.minecraft.nbt.NBTTagIntArray
 import net.minecraftforge.common.util.Constants
@@ -31,6 +32,7 @@ class NBTTagCompound(override val rawNBT: MCNBTTagCompound) : NBTBase(rawNBT) {
 
     fun getTag(key: String) = when (val tag = rawNBT.getTag(key)) {
         is MCNBTTagCompound -> NBTTagCompound(tag)
+        is MCNBTTagList -> NBTTagList(tag)
         is MCNBTBase -> NBTBase(tag)
         else -> null
     }
@@ -59,7 +61,7 @@ class NBTTagCompound(override val rawNBT: MCNBTTagCompound) : NBTBase(rawNBT) {
 
     fun getCompoundTag(key: String) = NBTTagCompound(rawNBT.getCompoundTag(key))
 
-    fun getTagList(key: String, type: Int) = rawNBT.getTagList(key, type)
+    fun getTagList(key: String, type: Int) = NBTTagList(rawNBT.getTagList(key, type))
 
     fun get(key: String, type: NBTDataType, tagType: Int?): Any? {
         return when (type) {

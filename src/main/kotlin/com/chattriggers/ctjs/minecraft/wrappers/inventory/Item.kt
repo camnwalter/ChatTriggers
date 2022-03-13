@@ -224,7 +224,7 @@ class Item {
             it.getTagList("Lore", Constants.NBT.TAG_STRING)
         }
 
-        lore.tagList.clear()
+        lore.clearTags()
         loreLines.forEach {
             lore.appendTag(MCNBTTagString(ChatLib.addColor(it)))
         }
