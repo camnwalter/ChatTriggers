@@ -152,12 +152,4 @@ object WorldListener {
             Entity(event.entity)
         )
     }
-
-    @SubscribeEvent
-    fun attackEntityEvent(event: AttackEntityEvent) {
-        TriggerType.EntityDamage.triggerAll(
-            Entity(event.target),
-            PlayerMP(event.entityPlayer)
-        )
-    }
 }
