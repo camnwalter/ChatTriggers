@@ -197,9 +197,9 @@ class Item {
      */
     fun getLore(): List<String> {
         //#if MC<=10809
-        return itemStack.getTooltip(Player.getPlayer(), Client.getMinecraft().gameSettings.advancedItemTooltips)
+        return itemStack.getTooltip(Player.getPlayer(), Client.getMinecraft().gameSettings.advancedItemTooltips).drop(1)
         //#else
-        //$$ return itemStack.getTooltip(Player.getPlayer(), ITooltipFlag.TooltipFlags.ADVANCED)
+        //$$ return itemStack.getTooltip(Player.getPlayer(), ITooltipFlag.TooltipFlags.ADVANCED).drop(1)
         //#endif
     }
 
