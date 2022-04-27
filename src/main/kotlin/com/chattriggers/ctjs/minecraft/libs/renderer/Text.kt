@@ -125,7 +125,7 @@ class Text {
     }
 
     @JvmOverloads
-    fun draw(x: Float? = null, y: Float? = null) = apply {
+    fun draw(x: Float? = null, y: Float? = null) {
         GlStateManager.enableBlend()
         GlStateManager.scale(scale, scale, scale)
 

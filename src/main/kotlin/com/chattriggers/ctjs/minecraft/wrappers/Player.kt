@@ -348,7 +348,7 @@ object Player {
         showCape: Boolean = true,
         showHeldItem: Boolean = true,
         showArrows: Boolean = true
-    ) = apply {
+    ) {
         Renderer.drawPlayer(this, x, y, rotate, showNametag, showArmor, showCape, showHeldItem, showArrows)
     }
 
