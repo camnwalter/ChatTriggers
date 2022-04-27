@@ -80,7 +80,7 @@ class Rectangle(
         setThickness(thickness)
     }
 
-    fun draw() = apply {
+    fun draw() {
         shadow.draw()
         outline.draw()
         Renderer.drawRect(color, x, y, width, height)

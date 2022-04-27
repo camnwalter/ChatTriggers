@@ -108,7 +108,7 @@ class Shape(private var color: Long) {
         drawMode = 5
     }
 
-    fun draw() = apply {
+    fun draw() {
         val tessellator = MCTessellator.getInstance()
         val worldRenderer = tessellator.getRenderer()
 
