@@ -4,16 +4,18 @@ import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.utils.kotlin.*
 
 class TextComponent {
-
     lateinit var chatComponentText: MCITextComponent
+    internal lateinit var parent: Message
 
     private var text: String
     private var formatted = true
 
     private var clickAction: String? = null
     private var clickValue: String? = null
+    private var clickCallback: (() -> Unit)? = null
     private var hoverAction: String? = "show_text"
     private var hoverValue: String? = null
+    private var hoverCallback: (() -> String?)? = null
 
     /**
      * Creates a TextComponent from a string.
@@ -73,13 +75,23 @@ class TextComponent {
 
     /**
      * Sets the click action and value of the component.
-     * See [TextComponent.setClickAction] for possible click actions.
+     * See [setClickAction] for possible click actions.
      * @param action the click action
      * @param value the click value
      */
     fun setClick(action: String, value: String) = apply {
         clickAction = action
         clickValue = value
+        reInstanceClick()
+    }
+
+    /**
+     * Sets the callback to be run every time the component is clicked.
+     * @param callback the callback to be run
+     */
+    fun setClick(callback: () -> Unit) = apply {
+        clickAction = "run_function"
+        clickCallback = callback
         reInstanceClick()
     }
 
@@ -110,7 +122,7 @@ class TextComponent {
 
     /**
      * Sets the value to be used by the click action.
-     * See [TextComponent.setClickAction] for possible click actions.
+     * See [setClickAction] for possible click actions.
      * @param value the click value
      */
     fun setClickValue(value: String) = apply {
@@ -127,6 +139,17 @@ class TextComponent {
     fun setHover(action: String, value: String) = apply {
         hoverAction = action
         hoverValue = value
+        reInstanceHover()
+    }
+
+    /**
+     * Sets the callback to be run every time the component is hovered over.
+     * Return a string from the callback to set the hover value.
+     * @param callback the callback to be run
+     */
+    fun setHover(callback: () -> String?) = apply {
+        hoverAction = "run_function"
+        hoverCallback = callback
         reInstanceHover()
     }
 
@@ -157,7 +180,7 @@ class TextComponent {
 
     /**
      * Sets the value to be used by the hover action.
-     * See [TextComponent.setHoverAction] for possible hover actions.
+     * See [setHoverAction] for possible hover actions.
      * @param value the hover value
      */
     fun setHoverValue(value: String) = apply {
@@ -177,12 +200,12 @@ class TextComponent {
 
     override fun toString() =
         "TextComponent{" +
-                "text:$text, " +
-                "formatted:$formatted, " +
-                "hoverAction:$hoverAction, " +
-                "hoverValue:$hoverValue, " +
-                "clickAction:$clickAction, " +
-                "clickValue:$clickValue" +
+                "text=$text, " +
+                "formatted=$formatted, " +
+                "hoverAction=$hoverAction, " +
+                "hoverValue=$hoverValue, " +
+                "clickAction=$clickAction, " +
+                "clickValue=$clickValue" +
                 "}"
 
     private fun reInstance() {
@@ -196,6 +219,11 @@ class TextComponent {
     }
 
     private fun reInstanceClick() {
+        if (clickAction == "run_function" && clickCallback != null) {
+            clickListeners[this] = clickCallback!!
+            return
+        }
+
         if (clickAction == null || clickValue == null) return
 
         chatComponentText.getStyling()
@@ -212,6 +240,10 @@ class TextComponent {
     }
 
     private fun reInstanceHover() {
+        if (hoverAction == "run_function" && hoverCallback != null) {
+            hoverListeners[this] = hoverCallback!!
+        }
+
         if (hoverAction == null || hoverValue == null) return
 
         chatComponentText.getStyling()
@@ -221,11 +253,18 @@ class TextComponent {
                 //$$ .hoverEvent =
                 //#endif
             MCTextHoverEvent(
-                MCHoverEventAction.getValueByCanonicalName(hoverAction),
+                MCHoverEventAction.getValueByCanonicalName(
+                    if (hoverAction == "run_function") "show_text" else hoverAction
+                ),
                 MCBaseTextComponent(
                     if (formatted) ChatLib.addColor(hoverValue)
                     else hoverValue
                 )
             )
+    }
+
+    companion object {
+        val clickListeners = mutableMapOf<TextComponent, () -> Unit>()
+        val hoverListeners = mutableMapOf<TextComponent, () -> String?>()
     }
 }

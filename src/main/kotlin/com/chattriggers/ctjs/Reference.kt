@@ -8,6 +8,7 @@ import com.chattriggers.ctjs.minecraft.listeners.MouseListener
 import com.chattriggers.ctjs.minecraft.objects.display.DisplayHandler
 import com.chattriggers.ctjs.minecraft.objects.keybind.KeyBind
 import com.chattriggers.ctjs.minecraft.objects.message.Message
+import com.chattriggers.ctjs.minecraft.objects.message.TextComponent
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.World
 import com.chattriggers.ctjs.triggers.TriggerType
@@ -40,6 +41,8 @@ object Reference {
         ModuleManager.teardown()
         MouseListener.clearListeners()
         KeyBind.clearKeyBinds()
+        TextComponent.clickListeners.clear()
+        TextComponent.hoverListeners.clear()
 
         Command.activeCommands.values.toList().forEach(Command::unregister)
 
