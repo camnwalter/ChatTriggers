@@ -6,6 +6,7 @@ import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.triggers.RegularTrigger
 import com.chattriggers.ctjs.triggers.TriggerType
+import gg.essential.api.utils.GuiUtil
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.GlStateManager
@@ -38,7 +39,7 @@ abstract class Gui : GuiScreen() {
     }
 
     fun open() {
-        GuiHandler.openGui(this)
+        GuiUtil.open(this)
     }
 
     fun close() {

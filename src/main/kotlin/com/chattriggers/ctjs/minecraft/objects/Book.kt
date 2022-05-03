@@ -1,12 +1,12 @@
 package com.chattriggers.ctjs.minecraft.objects
 
-import com.chattriggers.ctjs.minecraft.objects.gui.GuiHandler
 import com.chattriggers.ctjs.minecraft.objects.message.Message
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagCompound
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagList
 import com.chattriggers.ctjs.utils.kotlin.*
+import gg.essential.api.utils.GuiUtil
 import net.minecraft.client.gui.GuiScreenBook
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
@@ -97,7 +97,7 @@ class Book(bookName: String) {
         bookScreen = GuiScreenBook(Player.getPlayer(), book, false)
 
         bookScreen!!.currPage = pageIndex
-        GuiHandler.openGui(bookScreen ?: return)
+        GuiUtil.open(bookScreen)
     }
 
     fun isOpen(): Boolean {
