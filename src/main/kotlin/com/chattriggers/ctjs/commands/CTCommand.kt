@@ -1,8 +1,8 @@
 package com.chattriggers.ctjs.commands
 
 import com.chattriggers.ctjs.Reference
-import com.chattriggers.ctjs.engine.module.ModuleManager
 import com.chattriggers.ctjs.browser.ModuleBrowser
+import com.chattriggers.ctjs.engine.module.ModuleManager
 import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.minecraft.listeners.ClientListener
 import com.chattriggers.ctjs.minecraft.objects.gui.GuiHandler
@@ -68,7 +68,10 @@ object CTCommand : CommandBase() {
             "delete" ->
                 if (args.size == 1) ChatLib.chat("&c/ct delete [module name]")
                 else ChatLib.chat((if (ModuleManager.deleteModule(args[1])) "&aDeleted " else "&cFailed to delete ") + args[1])
-            "modules" -> TODO()
+            "modules" -> {
+                ModuleBrowser.showPage(ModuleBrowser.Page.Installed)
+                GuiUtil.open(ModuleBrowser)
+            }
             "browse", "browser" -> GuiHandler.openGui(ModuleBrowser)
             "console" ->
                 if (args.size == 1) ModuleManager.generalConsole.showConsole()

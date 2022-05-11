@@ -40,7 +40,6 @@ class BrowserEntry(val module: BrowserModuleProvider) : UIContainer() {
         color = VigilancePalette.getDarkText().toConstraint()
     } childOf block
 
-
     init {
         val description = module.description
         val descriptionContainer = if (description != null) {
@@ -51,7 +50,7 @@ class BrowserEntry(val module: BrowserModuleProvider) : UIContainer() {
                 height = ChildBasedSizeConstraint().coerceAtMost(100.pixels())
             } childOf block
 
-            val description by MarkdownComponent(description, markdownConfig).constrain {
+            val desc by MarkdownComponent(description, markdownConfig).constrain {
                 width = 100.percent()
             } childOf descriptionContainer
 

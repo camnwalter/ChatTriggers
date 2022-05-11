@@ -3,6 +3,7 @@ package com.chattriggers.ctjs.browser
 import com.chattriggers.ctjs.browser.pages.AccountPage
 import com.chattriggers.ctjs.browser.pages.LoginPage
 import com.chattriggers.ctjs.browser.pages.AllModulesPage
+import com.chattriggers.ctjs.browser.pages.InstalledModulesPage
 import gg.essential.elementa.WindowScreen
 import gg.essential.elementa.components.*
 import gg.essential.elementa.components.inspector.Inspector
@@ -113,5 +114,7 @@ object ModuleBrowser : WindowScreen(restoreCurrentGuiOnClose = true, newGuiScale
             override val component: UIContainer
                 get() = if (isLoggedIn) AccountPage else LoginPage
         }
+
+        object Installed : Page(2, InstalledModulesPage)
     }
 }

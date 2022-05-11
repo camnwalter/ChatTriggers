@@ -45,6 +45,10 @@ object Panel : UIContainer() {
         Entry("/images/account.png", "Account") {
             ModuleBrowser.showPage(ModuleBrowser.Page.Account)
         } childOf container
+
+        Entry("/images/modules.png", "Installed") {
+            ModuleBrowser.showPage(ModuleBrowser.Page.Installed)
+        } childOf container
     }
 
     class Entry(

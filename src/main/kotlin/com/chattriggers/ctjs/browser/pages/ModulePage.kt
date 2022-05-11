@@ -155,7 +155,7 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             y = NearestSiblingConstraint(15f)
             width = 100.percent() - 30.pixels()
             height = 1.pixel()
-        } childOf this
+        } childOf modulesPageContainer
     }
 
     private val moduleContentContainer by UIContainer().constrain {
