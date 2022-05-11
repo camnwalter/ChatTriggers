@@ -75,6 +75,10 @@ class TextInput(password: Boolean = false) : UIContainer() {
 
     fun getText() = textInput.getText()
 
+    fun setText(text: String) {
+        textInput.setText(text)
+    }
+
     fun onChange(action: (String) -> Unit) = apply {
         onChangeAction = action
     }

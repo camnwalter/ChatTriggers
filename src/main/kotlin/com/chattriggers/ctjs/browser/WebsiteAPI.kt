@@ -1,22 +1,17 @@
 package com.chattriggers.ctjs.browser
 
 import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.browser.pages.LoginPage
 import com.chattriggers.ctjs.utils.kotlin.fromJson
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 
 object WebsiteAPI {
-    private val idRegex = """"id": ?(\d+)""".toRegex()
-
-    // We only care about the ID
-    data class LoginResponse(val id: Int)
-
-    fun login(username: String, password: String): LoginResponse? {
+    fun login(username: String, password: String): WebsiteOwner? {
         val (code, res) = sendFormUrlEncodedRequest("${CTJS.WEBSITE_ROOT}/api/account/login") {
             put("username", username)
             put("password", password)
@@ -25,13 +20,16 @@ object WebsiteAPI {
         if (code != 200)
             return null
 
-        // Kind scuffed
-        val match = idRegex.find(res) ?: return null
-        return LoginResponse(match.groupValues[1].toInt())
+        return try {
+            CTJS.gson.fromJson<WebsiteOwner>(res)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
-    fun createAccount(username: String, email: String, password: String): LoginResponse? {
-        val (code, _) = sendFormUrlEncodedRequest("${CTJS.WEBSITE_ROOT}/api/account/new") {
+    fun createAccount(username: String, email: String, password: String): WebsiteOwner? {
+        val (code) = sendFormUrlEncodedRequest("${CTJS.WEBSITE_ROOT}/api/account/new") {
             put("username", username)
             put("email", email)
             put("password", password)
@@ -40,8 +38,24 @@ object WebsiteAPI {
         return if (code == 200) login(username, password) else null
     }
 
-    fun getUserModules(id: Int): List<WebsiteModule> {
-        val url = "${CTJS.WEBSITE_ROOT}/api/modules?owner=$id"
+    fun logout() {
+        val url = "${CTJS.WEBSITE_ROOT}/api/account/logout"
+
+        URL(url).openConnection().apply {
+            setRequestProperty("User-Agent", "Mozilla/5.0")
+        }.getInputStream().bufferedReader().readText()
+
+        ModuleBrowser.username.set(null)
+        ModuleBrowser.id.set(null)
+        ModuleBrowser.rank.set(null)
+
+        ModuleBrowser.isLoggedIn = false
+        LoginPage.clearInputs()
+        ModuleBrowser.showPage(ModuleBrowser.Page.Account)
+    }
+
+    fun getUserModules(id: Int, offset: Int): WebsiteResponse? {
+        val url = "${CTJS.WEBSITE_ROOT}/api/modules?owner=$id&offset=${offset * 10}"
 
         return try {
             val response = URL(url).openConnection().apply {
@@ -51,7 +65,7 @@ object WebsiteAPI {
             CTJS.gson.fromJson(response)
         } catch (e: Exception) {
             e.printStackTrace()
-            emptyList()
+            null
         }
     }
 
@@ -64,6 +78,8 @@ object WebsiteAPI {
             setRequestProperty("User-Agent", "Mozilla/5.0")
             requestMethod = "POST"
             doOutput = true
+            connectTimeout = 5000
+            readTimeout = 5000
         }
 
         try {
@@ -82,6 +98,9 @@ object WebsiteAPI {
             }
 
             return Response(200, text)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return Response(500, "")
         } finally {
             connection.disconnect()
         }

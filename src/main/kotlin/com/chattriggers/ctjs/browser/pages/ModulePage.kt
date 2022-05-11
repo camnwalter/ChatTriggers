@@ -141,6 +141,7 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
         }
     }
 
+    // TODO: What is this used for?
     private val settings by UIImage.ofResource("/images/settings.png").constrain {
         x = 10.pixels(alignOpposite = true)
         y = 10.pixels()

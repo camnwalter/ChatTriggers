@@ -20,6 +20,7 @@ object ModuleBrowser : WindowScreen(restoreCurrentGuiOnClose = true, newGuiScale
     var isLoggedIn by state(false)
     var username = BasicState<String?>(null)
     var id = BasicState<Int?>(null)
+    var rank = BasicState<String?>(null)
     private var displayedPage: Page = Page.Modules
 
     init {

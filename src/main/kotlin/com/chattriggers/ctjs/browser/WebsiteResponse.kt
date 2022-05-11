@@ -33,6 +33,7 @@ data class WebsiteOwner(
     val id: Int,
     val name: String,
     val rank: Rank,
+    val email: String,
 ) {
     enum class Rank {
         @SerializedName("admin")
@@ -51,6 +52,4 @@ data class WebsiteRelease(
     override val changelog: String,
     val downloads: Int,
     val verified: Boolean,
-) : BrowserReleaseProvider {
-
-}
+) : BrowserReleaseProvider

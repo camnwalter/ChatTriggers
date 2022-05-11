@@ -75,7 +75,11 @@ object LoginPage : UIContainer() {
 
     private val passwordField by InputField("Password", password = true) childOf content
 
-    private val confirmPasswordField by InputField("Confirm Password", password = true, initiallyHidden = true) childOf content
+    private val confirmPasswordField by InputField(
+        "Confirm Password",
+        password = true,
+        initiallyHidden = true
+    ) childOf content
 
     private val submit by ButtonComponent("Submit").constrain {
         x = CenterConstraint()
@@ -88,6 +92,9 @@ object LoginPage : UIContainer() {
     } childOf content
 
     init {
+        // Initialize account page so the listeners trigger on state changes
+        AccountPage
+
         constrain {
             width = 100.percent()
             height = 100.percent()
@@ -102,20 +109,19 @@ object LoginPage : UIContainer() {
         if (Window.ofOrNull(submitButtonError) == null)
             return
 
-        if (isOnLoginScreen) {
+        val (id, name, rank) = if (isOnLoginScreen) {
             val username = usernameField.getText().trim()
-            val (id) = WebsiteAPI.login(username, passwordField.getText().trim()) ?: TODO()
-            ModuleBrowser.username.set(username)
-            ModuleBrowser.id.set(id)
+            WebsiteAPI.login(username, passwordField.getText().trim()) ?: return
         } else {
             val username = usernameField.getText().trim()
             val email = emailField.getText().trim()
             val password = passwordField.getText().trim()
-            val (id) = WebsiteAPI.createAccount(username, email, password) ?: TODO()
-
-            ModuleBrowser.username.set(username)
-            ModuleBrowser.id.set(id)
+            WebsiteAPI.createAccount(username, email, password) ?: return
         }
+
+        ModuleBrowser.username.set(name)
+        ModuleBrowser.id.set(id)
+        ModuleBrowser.rank.set(rank.name)
 
         ModuleBrowser.isLoggedIn = true
         ModuleBrowser.showPage(ModuleBrowser.Page.Account)
@@ -201,6 +207,13 @@ object LoginPage : UIContainer() {
         submitButtonError.setErrors(errors)
     }
 
+    fun clearInputs() {
+        usernameField.setText("")
+        emailField.setText("")
+        passwordField.setText("")
+        confirmPasswordField.setText("")
+    }
+
     class InputField(text: String, password: Boolean = false, initiallyHidden: Boolean = false) : UIContainer() {
         private val container by UIContainer().constrain {
             y = 1.pixels(alignOpposite = true)
@@ -265,5 +278,9 @@ object LoginPage : UIContainer() {
         }
 
         fun getText() = input.getText()
+
+        fun setText(text: String) {
+            input.setText(text)
+        }
     }
 }
