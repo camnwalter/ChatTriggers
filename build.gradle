@@ -75,6 +75,12 @@ afterEvaluate {
     tasks.sourceMainJava.replace '@MC_VERSION@', "[ ${project.minecraft.version} ]"
 }
 
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjvm-default=all-compatibility"]
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
