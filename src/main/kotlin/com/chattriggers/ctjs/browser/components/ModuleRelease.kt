@@ -19,7 +19,6 @@ class ModuleRelease(private val release: BrowserReleaseProvider) : UIContainer()
         highlightColor = VigilancePalette.getBrightHighlight(),
         backgroundHoverColor = VigilancePalette.getLightBackground(),
         highlightHoverColor = VigilancePalette.getAccent(),
-        outlineWidth = 1f
     ) effect ScissorEffect() childOf this
 
     private val text1 by UIText("Module version ").constrain {
@@ -70,7 +69,9 @@ class ModuleRelease(private val release: BrowserReleaseProvider) : UIContainer()
             changelog childOf block
         }
 
-        block.constrainYBasedOnChildren()
+        block.constrain {
+            height = basicHeightConstraint { text1.getBottom() - text1.getTop() + 20f }
+        }
     }
 
     override fun afterInitialization() {
@@ -80,10 +81,6 @@ class ModuleRelease(private val release: BrowserReleaseProvider) : UIContainer()
         // the block, otherwise the markdown component will be outside the
         // block bounds and will never be drawn
         if (release.changelog.isNotBlank()) {
-            block.constrain {
-                height = 200.pixels()
-            }
-
             Window.enqueueRenderOperation {
                 block.constrain {
                     height = basicHeightConstraint {

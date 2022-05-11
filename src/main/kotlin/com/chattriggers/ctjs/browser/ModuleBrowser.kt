@@ -15,7 +15,7 @@ import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.state.state
 import gg.essential.vigilance.gui.VigilancePalette
 
-object ModuleBrowser : WindowScreen(restoreCurrentGuiOnClose = true) {
+object ModuleBrowser : WindowScreen(restoreCurrentGuiOnClose = true, newGuiScale = 2) {
     var isLoggedIn by state(false)
     var username = BasicState<String?>(null)
     var id = BasicState<Int?>(null)

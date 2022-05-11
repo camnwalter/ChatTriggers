@@ -20,7 +20,7 @@ open class HighlightedBlock(
     highlightHoverColor: Color = highlightColor,
     protected val blockRadius: Float = 0f,
     protected val outlineWidth: Float = 1f,
-    protected val clickBehavior: ClickBehavior = ClickBehavior.NONE
+    protected val clickBehavior: ClickBehavior = ClickBehavior.NONE,
 ) : UIContainer() {
     protected var clicked: Boolean = false
     protected var clickAction: (UIClickEvent) -> Unit = {}
@@ -33,12 +33,12 @@ open class HighlightedBlock(
     private var onHighlightAction: () -> Unit = {}
     private var onUnhighlightAction: () -> Unit = {}
 
-    val parentContainer = makeComponent(highlightColorState).constrain {
+    val parentContainer by makeComponent(highlightColorState).constrain {
         width = 100.percent()
         height = 100.percent()
     }
 
-    val contentContainer = makeComponent(backgroundColorState).constrain {
+    val contentContainer by makeComponent(backgroundColorState).constrain {
         x = outlineWidth.pixels()
         y = outlineWidth.pixels()
         width = 100.percent() - (outlineWidth * 2f).pixels()

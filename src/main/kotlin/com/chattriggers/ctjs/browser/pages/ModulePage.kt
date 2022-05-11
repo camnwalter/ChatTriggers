@@ -29,9 +29,14 @@ interface BrowserReleaseProvider {
 }
 
 class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) : UIContainer() {
+    private val modulesPageContainer by UIContainer().constrain {
+        width = 100.percent()
+        height = 100.percent()
+    } childOf this
+
     private val header by UIContainer().constrain {
         width = 100.percent()
-    } childOf this
+    } childOf modulesPageContainer
 
     private val backButtonContainer by UIContainer().constrain {
         x = 20.pixels()
@@ -153,26 +158,30 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
         } childOf this
     }
 
-    private val container by ScrollComponent().constrain {
-        x = 20.pixels()
-        y = NearestSiblingConstraint(20f)
-        width = 100.percent() - 40.pixels()
-        height = FillConstraint()
-    } childOf this
+    private val moduleContentContainer by UIContainer().constrain {
+        x = 45.pixels()
+        y = NearestSiblingConstraint(15f)
+        width = 100.percent() - 90.pixels()
+        height = basicHeightConstraint { modulesPageContainer.getBottom() - it.getTop() }
+    } childOf modulesPageContainer
+
+    private val moduleContent by ScrollComponent().constrain {
+        width = 100.percent()
+        height = 100.percent()
+    } childOf moduleContentContainer
 
     private val descriptionTitle by UIText("Description").constrain {
         textScale = 1.5.pixels()
         color = VigilancePalette.getBrightText().toConstraint()
-    } childOf container
+    } childOf moduleContent
 
     private val description by MarkdownComponent(
         module.description.let { if (it?.isBlank() != false) "No description" else it },
         BrowserEntry.markdownConfig,
     ).constrain {
-        x = 35.pixels()
         y = NearestSiblingConstraint(15f)
-        width = 100.percent() - 70.pixels()
-    } childOf container
+        width = 100.percent()
+    } childOf moduleContent
 
     init {
         if (module.releases.isNotEmpty()) {
@@ -181,20 +190,20 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
                 y = NearestSiblingConstraint(15f)
                 width = 100.percent()
                 height = 1.pixel()
-            } childOf container
+            } childOf moduleContent
 
             UIText("Releases").constrain {
                 y = NearestSiblingConstraint(15f)
                 textScale = 1.5.pixels()
                 color = VigilancePalette.getBrightText().toConstraint()
-            } childOf container
+            } childOf moduleContent
 
             module.releases.forEach {
                 ModuleRelease(it).constrain {
                     x = 30.pixels()
                     y = NearestSiblingConstraint(15f)
                     width = 100.percent() - 60.pixels()
-                } childOf container
+                } childOf moduleContent
             }
         }
     }
