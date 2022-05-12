@@ -84,7 +84,7 @@ object CTCommand : CommandBase() {
         }
     }
 
-    private fun import(moduleName: String) {
+    internal fun import(moduleName: String) {
         if (ModuleManager.cachedModules.any { it.name.equals(moduleName, ignoreCase = true) }) {
             ChatLib.chat("&cModule $moduleName is already installed!")
         } else {

@@ -1,26 +1,26 @@
 package com.chattriggers.ctjs.browser.components
 
+import gg.essential.elementa.UIComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedSizeConstraint
 import gg.essential.elementa.dsl.*
-import gg.essential.elementa.transitions.RecursiveFadeInTransition
 import gg.essential.elementa.utils.withAlpha
 import gg.essential.vigilance.gui.VigilancePalette
 import gg.essential.vigilance.utils.onLeftClick
 
-open class Modal(
-    container: HighlightedBlock = HighlightedBlock(
+class Modal(
+    highlightedBlock: HighlightedBlock = HighlightedBlock(
         backgroundColor = VigilancePalette.getDarkBackground(),
         highlightColor = VigilancePalette.getDarkHighlight(),
         highlightHoverColor = VigilancePalette.getAccent()
     ),
-    backgroundAlpha: Int = 150
+    backgroundAlpha: Int = 150,
 ) : UIBlock(VigilancePalette.getModalBackground().withAlpha(backgroundAlpha)) {
-    protected val container by container.constrain {
+    private val container by highlightedBlock.constrain {
         x = CenterConstraint()
         y = CenterConstraint()
-    } childOf this
+    }
 
     init {
         constrain {
@@ -29,6 +29,8 @@ open class Modal(
             width = 100.percentOfWindow()
             height = 100.percentOfWindow()
         }
+
+        super.addChild(container)
 
         container.constrainBasedOnChildren()
         container.contentContainer.constrain {
@@ -47,17 +49,21 @@ open class Modal(
         }
     }
 
+    override fun addChild(component: UIComponent) = apply {
+        component childOf container
+    }
+
     override fun afterInitialization() {
         setFloating(true)
     }
 
-    open fun fadeIn(callback: (() -> Unit)? = null) {
+    fun fadeIn(callback: (() -> Unit)? = null) {
         unhide()
         setFloating(true)
         callback?.invoke()
     }
 
-    open fun fadeOut(callback: (() -> Unit)? = null) {
+    fun fadeOut(callback: (() -> Unit)? = null) {
         hide(instantly = true)
         setFloating(false)
         callback?.invoke()

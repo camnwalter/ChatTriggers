@@ -3,6 +3,9 @@ package com.chattriggers.ctjs.browser.pages
 import com.chattriggers.ctjs.Reference
 import com.chattriggers.ctjs.browser.BrowserEntry
 import com.chattriggers.ctjs.browser.NearestSiblingConstraint
+import com.chattriggers.ctjs.browser.components.ButtonComponent
+import com.chattriggers.ctjs.browser.components.Modal
+import com.chattriggers.ctjs.engine.module.Module
 import com.chattriggers.ctjs.engine.module.ModuleManager
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
@@ -11,21 +14,16 @@ import gg.essential.elementa.dsl.*
 import gg.essential.universal.UMatrixStack
 import gg.essential.vigilance.gui.VigilancePalette
 import gg.essential.vigilance.utils.onLeftClick
-import java.awt.Color
 
 object InstalledModulesPage : UIContainer() {
     private var gotModules = false
     private val modules = ModuleManager.cachedModules.toMutableList()
-
-    private val container by UIContainer().constrain {
-        width = 100.percent()
-        height = 100.percent()
-    } childOf this
+    private var clickedModule: Module? = null
 
     private val header by UIContainer().constrain {
         width = 100.percent()
         height = 30.pixels()
-    } childOf container
+    } childOf this
 
     private val title by UIText("Installed Modules").constrain {
         x = CenterConstraint()
@@ -40,26 +38,44 @@ object InstalledModulesPage : UIContainer() {
             y = NearestSiblingConstraint(15f)
             width = 100.percent() - 30.pixels()
             height = 1.pixel()
-        } childOf container
+        } childOf this
     }
 
     private val moduleContentContainer by UIContainer().constrain {
         x = 45.pixels()
         y = NearestSiblingConstraint(15f)
         width = 100.percent() - 90.pixels()
-        height = basicHeightConstraint { container.getBottom() - it.getTop() }
-    } childOf container
+        height = basicHeightConstraint { this@InstalledModulesPage.getBottom() - it.getTop() }
+    } childOf this
 
     private val moduleContent by ScrollComponent("Loading...").constrain {
         width = 100.percent()
         height = 100.percent()
     } childOf moduleContentContainer
 
+    private val modal by Modal() childOf this
+
+    private val confirmText by UIText("Do you want to uninstall this module?").constrain {
+        x = CenterConstraint()
+        y = 10.pixels()
+        textScale = 2.pixels()
+        color = VigilancePalette.getWarning().toConstraint()
+    } childOf modal
+
+    private val confirmButton by ButtonComponent("Yes").constrain {
+        x = CenterConstraint()
+        y = NearestSiblingConstraint(15f)
+    }.onClick {
+        ModuleManager.deleteModule(clickedModule?.name ?: return@onClick)
+        modal.fadeOut()
+    } childOf modal
+
     init {
         constrain {
             width = 100.percent()
             height = 100.percent()
         }
+        modal.hide()
     }
 
     override fun draw(matrixStack: UMatrixStack) {
@@ -92,15 +108,12 @@ object InstalledModulesPage : UIContainer() {
                     height = ChildBasedMaxSizeConstraint()
                 } childOf moduleContent
 
-                val removeModule by UIText("×").constrain {
+                val removeModule by ButtonComponent("Delete").constrain {
                     x = 10.pixels(alignOpposite = true)
                     y = 10.pixels()
-                    color = Color(200, 0, 0).toConstraint()
-                    textScale = 2.pixels()
-                }
-
-                removeModule.onLeftClick {
-                    ModuleManager.deleteModule(module.name)
+                }.onLeftClick {
+                    clickedModule = module
+                    modal.fadeIn()
                 } childOf entry
             }
         }

@@ -2,6 +2,7 @@ package com.chattriggers.ctjs.browser.components
 
 import com.chattriggers.ctjs.browser.BrowserEntry
 import com.chattriggers.ctjs.browser.NearestSiblingConstraint
+import com.chattriggers.ctjs.browser.pages.BrowserModuleProvider
 import com.chattriggers.ctjs.browser.pages.BrowserReleaseProvider
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.UIText
@@ -13,7 +14,10 @@ import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.markdown.MarkdownComponent
 import gg.essential.vigilance.gui.VigilancePalette
 
-class ModuleRelease(private val release: BrowserReleaseProvider) : UIContainer() {
+class ModuleRelease(
+    val module: BrowserModuleProvider,
+    private val release: BrowserReleaseProvider,
+) : UIContainer() {
     private val block by HighlightedBlock(
         backgroundColor = VigilancePalette.getBackground(),
         highlightColor = VigilancePalette.getBrightHighlight(),

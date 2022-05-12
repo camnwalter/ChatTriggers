@@ -1,12 +1,19 @@
 package com.chattriggers.ctjs.browser.pages
 
+import com.chattriggers.ctjs.Reference
 import com.chattriggers.ctjs.browser.BrowserEntry
 import com.chattriggers.ctjs.browser.NearestSiblingConstraint
+import com.chattriggers.ctjs.browser.components.ButtonComponent
+import com.chattriggers.ctjs.browser.components.Modal
 import com.chattriggers.ctjs.browser.components.ModuleRelease
 import com.chattriggers.ctjs.browser.components.Tag
+import com.chattriggers.ctjs.commands.CTCommand
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import gg.essential.elementa.components.*
-import gg.essential.elementa.constraints.*
+import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
+import gg.essential.elementa.constraints.ChildBasedRangeConstraint
+import gg.essential.elementa.constraints.CopyConstraintFloat
 import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.markdown.MarkdownComponent
@@ -29,14 +36,30 @@ interface BrowserReleaseProvider {
 }
 
 class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) : UIContainer() {
-    private val modulesPageContainer by UIContainer().constrain {
-        width = 100.percent()
-        height = 100.percent()
-    } childOf this
+    private var clickedModule: BrowserModuleProvider? = null
+
+    private val modal by Modal() childOf this
+
+    private val confirmText by UIText("Do you want to import this module?").constrain {
+        x = CenterConstraint()
+        y = 10.pixels()
+        textScale = 2.pixels()
+        color = VigilancePalette.getBrightText().toConstraint()
+    } childOf modal
+
+    private val confirmButton by ButtonComponent("Yes").constrain {
+        x = CenterConstraint()
+        y = NearestSiblingConstraint(15f)
+    }.onClick {
+        Reference.conditionalThread {
+            CTCommand.import(clickedModule?.name ?: return@conditionalThread)
+            modal.fadeOut()
+        }
+    } childOf modal
 
     private val header by UIContainer().constrain {
         width = 100.percent()
-    } childOf modulesPageContainer
+    } childOf this
 
     private val backButtonContainer by UIContainer().constrain {
         x = 20.pixels()
@@ -156,15 +179,15 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             y = NearestSiblingConstraint(15f)
             width = 100.percent() - 30.pixels()
             height = 1.pixel()
-        } childOf modulesPageContainer
+        } childOf this
     }
 
     private val moduleContentContainer by UIContainer().constrain {
         x = 45.pixels()
         y = NearestSiblingConstraint(15f)
         width = 100.percent() - 90.pixels()
-        height = basicHeightConstraint { modulesPageContainer.getBottom() - it.getTop() }
-    } childOf modulesPageContainer
+        height = basicHeightConstraint { this@ModulePage.getBottom() - it.getTop() }
+    } childOf this
 
     private val moduleContent by ScrollComponent().constrain {
         width = 100.percent()
@@ -200,10 +223,14 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             } childOf moduleContent
 
             module.releases.forEach {
-                ModuleRelease(it).constrain {
+                val release = ModuleRelease(module, it).constrain {
                     x = 30.pixels()
                     y = NearestSiblingConstraint(15f)
                     width = 100.percent() - 60.pixels()
+                }
+                release.onLeftClick {
+                    clickedModule = release.module
+                    modal.fadeIn()
                 } childOf moduleContent
             }
         }
@@ -214,5 +241,6 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             width = 100.percent()
             height = 100.percent()
         }
+        modal.hide()
     }
 }
