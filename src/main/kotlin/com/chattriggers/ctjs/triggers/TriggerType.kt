@@ -80,7 +80,6 @@ enum class TriggerType {
     BlockBreak,
     SpawnParticle,
     EntityDeath,
-    EntityDamage,
 
     // misc
     Command,

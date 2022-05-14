@@ -21,6 +21,7 @@ object Tessellator {
 
     private var firstVertex = true
     private var began = false
+    private var textured = true
 
     @JvmStatic
     fun disableAlpha() = apply {
@@ -139,6 +140,11 @@ object Tessellator {
         enableBlend()
         tryBlendFuncSeparate(770, 771, 1, 0)
 
+        if (!textured) {
+            disableTexture2D()
+            this.textured = false
+        }
+
         GlStateManager.translate(-renderManager.viewerPosX, -renderManager.viewerPosY, -renderManager.viewerPosZ)
 
         worldRenderer.begin(
@@ -253,6 +259,11 @@ object Tessellator {
         colorize(1f, 1f, 1f, 1f)
 
         began = false
+
+        if (!textured) {
+            enableTexture2D()
+            textured = true
+        }
 
         disableBlend()
         popMatrix()

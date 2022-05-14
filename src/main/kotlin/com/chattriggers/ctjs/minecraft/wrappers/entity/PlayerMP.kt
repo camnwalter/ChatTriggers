@@ -47,7 +47,6 @@ class PlayerMP(val player: EntityPlayer) : EntityLivingBase(player) {
      */
     @JvmOverloads
     fun draw(
-        player: Any,
         x: Int,
         y: Int,
         rotate: Boolean = false,
@@ -56,8 +55,8 @@ class PlayerMP(val player: EntityPlayer) : EntityLivingBase(player) {
         showCape: Boolean = true,
         showHeldItem: Boolean = true,
         showArrows: Boolean = true
-    ) = apply {
-        Renderer.drawPlayer(player, x, y, rotate, showNametag, showArmor, showCape, showHeldItem, showArrows)
+    ) {
+        Renderer.drawPlayer(this, x, y, rotate, showNametag, showArmor, showCape, showHeldItem, showArrows)
     }
 
     private fun getPlayerName(networkPlayerInfoIn: NetworkPlayerInfo?): String {

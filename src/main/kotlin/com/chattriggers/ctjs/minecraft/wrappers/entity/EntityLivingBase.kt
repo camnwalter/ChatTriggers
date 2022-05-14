@@ -11,14 +11,6 @@ import net.minecraft.potion.Potion
 //#endif
 
 open class EntityLivingBase(val entityLivingBase: MCEntityLivingBase) : Entity(entityLivingBase) {
-    fun addPotionEffect(effect: PotionEffect) {
-        entityLivingBase.addPotionEffect(effect.effect)
-    }
-
-    fun clearPotionEffects() {
-        entityLivingBase.clearActivePotions()
-    }
-
     fun getActivePotionEffects(): List<PotionEffect> {
         return entityLivingBase.activePotionEffects.map(::PotionEffect)
     }
@@ -45,17 +37,9 @@ open class EntityLivingBase(val entityLivingBase: MCEntityLivingBase) : Entity(e
 
     fun getHP() = entityLivingBase.health
 
-    fun setHP(health: Float) = apply {
-        entityLivingBase.health = health
-    }
-
     fun getMaxHP() = entityLivingBase.maxHealth
 
     fun getAbsorption() = entityLivingBase.absorptionAmount
-
-    fun setAbsorption(absorption: Float) = apply {
-        entityLivingBase.absorptionAmount = absorption
-    }
 
     fun getAge() = entityLivingBase.age
 

@@ -25,9 +25,13 @@ class NBTTagList(override val rawNBT: MCNBTTagList) : NBTBase(rawNBT) {
         rawNBT.tagList.add(index, nbt)
     }
 
-    fun removeTag(index: Int) = rawNBT.removeTag(index)
+    fun removeTag(index: Int) = NBTBase(rawNBT.removeTag(index))
 
-    fun getCompoundTagAt(index: Int) = rawNBT.getCompoundTagAt(index)
+    fun clearTags() = apply {
+        rawNBT.tagList.clear()
+    }
+
+    fun getCompoundTagAt(index: Int) = NBTTagCompound(rawNBT.getCompoundTagAt(index))
 
     fun getIntArrayAt(index: Int) = rawNBT.getIntArrayAt(index)
 

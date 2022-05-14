@@ -63,10 +63,10 @@ class Image constructor(var image: BufferedImage?) {
         x: Double, y: Double,
         width: Double = textureWidth.toDouble(),
         height: Double = textureHeight.toDouble()
-    ) = apply {
-        if (image != null) return@apply
-
-        Renderer.drawImage(this, x, y, width, height)
+    ) {
+        if (image == null) {
+            Renderer.drawImage(this, x, y, width, height)
+        }
     }
 
     companion object {

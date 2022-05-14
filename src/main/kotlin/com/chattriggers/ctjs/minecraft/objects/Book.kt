@@ -1,15 +1,16 @@
 package com.chattriggers.ctjs.minecraft.objects
 
-import com.chattriggers.ctjs.minecraft.objects.gui.GuiHandler
 import com.chattriggers.ctjs.minecraft.objects.message.Message
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagCompound
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagList
 import com.chattriggers.ctjs.utils.kotlin.*
+import gg.essential.api.utils.GuiUtil
 import net.minecraft.client.gui.GuiScreenBook
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
+import net.minecraftforge.common.util.Constants
 
 class Book(bookName: String) {
     private var bookScreen: GuiScreenBook? = null
@@ -36,11 +37,9 @@ class Book(bookName: String) {
      * @return the current book to allow method chaining
      */
     fun addPage(message: Message) = apply {
-        val pages = NBTTagList(
-            (
-                bookData.get("pages", NBTTagCompound.NBTDataType.TAG_LIST, 8) ?: return@apply
-            ) as MCNBTTagList
-        )
+        val pages = (
+            bookData.get("pages", NBTTagCompound.NBTDataType.TAG_LIST, Constants.NBT.TAG_STRING) ?: return@apply
+        ) as NBTTagList
         pages.appendTag(
             MCNBTTagString(
                 MCTextComponentSerializer.componentToJson(
@@ -70,11 +69,9 @@ class Book(bookName: String) {
      * @return the current book to allow method chaining
      */
     fun setPage(pageIndex: Int, message: Message) = apply {
-        val pages = NBTTagList(
-            (
-                bookData.get("pages", NBTTagCompound.NBTDataType.TAG_LIST, 8) ?: return@apply
-            ) as MCNBTTagList
-        )
+        val pages = (
+            bookData.get("pages", NBTTagCompound.NBTDataType.TAG_LIST, Constants.NBT.TAG_STRING) ?: return@apply
+        ) as NBTTagList
 
         for (i in pages.tagCount..pageIndex)
             addPage("")
@@ -100,7 +97,7 @@ class Book(bookName: String) {
         bookScreen = GuiScreenBook(Player.getPlayer(), book, false)
 
         bookScreen!!.currPage = pageIndex
-        GuiHandler.openGui(bookScreen ?: return)
+        GuiUtil.open(bookScreen)
     }
 
     fun isOpen(): Boolean {

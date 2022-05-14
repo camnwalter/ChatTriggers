@@ -258,13 +258,14 @@ object Player {
 
         return when (mop.typeOfHit) {
             MCRayTraceType.BLOCK -> {
+                val blockType = BlockType(world.getBlockState(mop.blockPos).block)
                 val block = Block(
-                    BlockType(world.getBlockState(mop.blockPos).block),
+                    blockType,
                     BlockPos(mop.blockPos),
                     BlockFace.fromMCEnumFacing(mop.sideHit),
                 )
 
-                if (block.type.mcBlock is BlockSign) Sign(block) else block
+                if (block.type.mcBlock is BlockSign) Sign(block) else blockType
             }
             MCRayTraceType.ENTITY -> Entity(mop.entityHit)
             else -> BlockType(0)
@@ -347,7 +348,7 @@ object Player {
         showCape: Boolean = true,
         showHeldItem: Boolean = true,
         showArrows: Boolean = true
-    ) = apply {
+    ) {
         Renderer.drawPlayer(this, x, y, rotate, showNametag, showArmor, showCape, showHeldItem, showArrows)
     }
 

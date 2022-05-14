@@ -873,20 +873,6 @@ interface IRegister {
     }
 
     /**
-     * Registers a new trigger that runs before an entity is damaged
-     *
-     * Passes through two arguments:
-     * - The target Entity that is damaged
-     * - The PlayerMP attacker
-     *
-     * @param method The method to call when the event is fired
-     * @return The trigger for additional modification
-     */
-    fun registerEntityDamage(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.EntityDamage, getImplementationLoader())
-    }
-
-    /**
      * Registers a new trigger that runs before an entity dies
      *
      * Passes through one argument:

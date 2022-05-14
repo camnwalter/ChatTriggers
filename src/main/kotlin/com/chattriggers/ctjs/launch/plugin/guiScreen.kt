@@ -22,7 +22,6 @@ fun injectGuiScreen() {
     injectMouseRelease()
     injectMouseDrag()
     injectTextComponentClick()
-    injectTextComponentHover()
     injectRenderTooltip()
     injectPreBackground()
 }
@@ -204,33 +203,17 @@ fun injectTextComponentClick() = inject {
 
         code {
             if (local1 != null) {
+                TextComponent.clickListeners.forEach { (textComponent, cb) ->
+                    if (textComponent.chatComponentText == local1) {
+                        cb()
+                    }
+                }
+
                 val event = CancellableEvent()
                 TriggerType.ChatComponentClicked.triggerAll(TextComponent(local1), event)
                 if (event.isCancelled())
                     iReturn(0)
             }
-        }
-    }
-}
-
-fun injectTextComponentHover() = inject {
-    className = "net/minecraft/client/gui/GuiScreen"
-    methodName = "handleComponentHover"
-    methodDesc = "(L$ICHAT_COMPONENT;II)V"
-    at = At(InjectionPoint.HEAD)
-
-    methodMaps = mapOf("func_175272_a" to "handleComponentHover")
-
-    codeBlock {
-        val local1 = shadowLocal<MCITextComponent?>()
-        val local2 = shadowLocal<Int>()
-        val local3 = shadowLocal<Int>()
-
-        code {
-            val event = CancellableEvent()
-            TriggerType.ChatComponentHovered.triggerAll(local1?.let(::TextComponent), local2, local3, event)
-            if (event.isCancelled())
-                methodReturn()
         }
     }
 }

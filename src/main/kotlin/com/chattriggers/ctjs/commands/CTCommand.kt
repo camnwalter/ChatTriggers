@@ -5,7 +5,6 @@ import com.chattriggers.ctjs.engine.module.ModuleManager
 import com.chattriggers.ctjs.engine.module.ModulesGui
 import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.minecraft.listeners.ClientListener
-import com.chattriggers.ctjs.minecraft.objects.gui.GuiHandler
 import com.chattriggers.ctjs.minecraft.objects.message.Message
 import com.chattriggers.ctjs.minecraft.objects.message.TextComponent
 import com.chattriggers.ctjs.printTraceToConsole
@@ -68,11 +67,11 @@ object CTCommand : CommandBase() {
             "delete" ->
                 if (args.size == 1) ChatLib.chat("&c/ct delete [module name]")
                 else ChatLib.chat((if (ModuleManager.deleteModule(args[1])) "&aDeleted " else "&cFailed to delete ") + args[1])
-            "modules" -> GuiHandler.openGui(ModulesGui)
+            "modules" -> GuiUtil.open(ModulesGui)
             "console" ->
                 if (args.size == 1) ModuleManager.generalConsole.showConsole()
                 else ModuleManager.getConsole(args[1]).showConsole()
-            "config", "settings", "setting" -> GuiUtil.open(Config.gui()!!)
+            "config", "settings", "setting" -> GuiUtil.open(Config.gui())
             "sim", "simulate" -> ChatLib.simulateChat(args.copyOfRange(1, args.size).joinToString(" "))
             "dump" -> dump(args)
             "copy" -> copyArgsToClipboard(args)

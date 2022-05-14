@@ -50,7 +50,6 @@
     loadClass("com.chattriggers.ctjs.minecraft.objects.display.DisplayHandler");
 
     loadClass("com.chattriggers.ctjs.engine.langs.js.JSGui", "Gui");
-    loadInstance("com.chattriggers.ctjs.minecraft.objects.gui.GuiHandler");
 
     loadClass("com.chattriggers.ctjs.minecraft.objects.message.Message");
     loadClass("com.chattriggers.ctjs.minecraft.objects.message.TextComponent");

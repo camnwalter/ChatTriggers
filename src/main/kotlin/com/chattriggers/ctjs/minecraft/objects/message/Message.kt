@@ -249,6 +249,11 @@ class Message {
 
         messageParts.forEach {
             chatMessage.appendSibling(it.chatComponentText)
+            it.parent = this
+        }
+
+        if (chatLineId == -1 && messageParts.any { it.getHoverAction() == "run_function" }) {
+            chatLineId = (1..Int.MAX_VALUE).random()
         }
     }
 }
