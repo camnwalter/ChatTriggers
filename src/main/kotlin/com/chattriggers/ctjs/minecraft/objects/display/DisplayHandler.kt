@@ -1,8 +1,8 @@
 package com.chattriggers.ctjs.minecraft.objects.display
 
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.GuiScreenEvent
+import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.util.concurrent.CopyOnWriteArrayList
@@ -23,7 +23,7 @@ object DisplayHandler {
         GlStateManager.pushMatrix()
         displays.forEach {
             if (it.registerType == RegisterType.RENDER_OVERLAY) {
-                it.render()
+                it.draw()
             }
         }
         GlStateManager.popMatrix()
@@ -34,7 +34,7 @@ object DisplayHandler {
         GlStateManager.pushMatrix()
         displays.forEach {
             if (it.registerType == RegisterType.POST_GUI_RENDER) {
-                it.render()
+                it.draw()
             }
         }
         GlStateManager.popMatrix()
@@ -44,7 +44,7 @@ object DisplayHandler {
         RENDER_OVERLAY, POST_GUI_RENDER
     }
 
-    enum class Background {
+    enum class BackgroundType {
         NONE, FULL, PER_LINE
     }
 
