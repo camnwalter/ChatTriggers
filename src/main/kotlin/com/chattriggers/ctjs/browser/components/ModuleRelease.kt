@@ -2,6 +2,7 @@ package com.chattriggers.ctjs.browser.components
 
 import com.chattriggers.ctjs.browser.BrowserEntry
 import com.chattriggers.ctjs.browser.NearestSiblingConstraint
+import com.chattriggers.ctjs.browser.WebsiteRelease
 import com.chattriggers.ctjs.browser.pages.BrowserModuleProvider
 import com.chattriggers.ctjs.browser.pages.BrowserReleaseProvider
 import gg.essential.elementa.components.UIContainer
@@ -49,6 +50,24 @@ class ModuleRelease(
         color = VigilancePalette.getBrightText().toConstraint()
     } childOf block
 
+    private val downloads by UIText("Downloads: ").constrain {
+        x = 20.pixels()
+        y = NearestSiblingConstraint(10f)
+        color = VigilancePalette.getMidText().toConstraint()
+    } childOf block
+
+    private val downloadCount by UIText("%,d".format((release as WebsiteRelease).downloads)).constrain {
+        x = NearestSiblingConstraint()
+        y = CopyConstraintFloat() boundTo downloads
+        color = VigilancePalette.getBrightText().toConstraint()
+    } childOf block
+
+    init {
+        block.constrain {
+            height = basicHeightConstraint { downloads.getBottom() - text1.getTop() + 20f }
+        }
+    }
+
     private val changelogTitle by UIText("Changelog:").constrain {
         x = 20.pixels()
         y = NearestSiblingConstraint(10f)
@@ -72,10 +91,6 @@ class ModuleRelease(
             changelogTitle childOf block
             changelog childOf block
         }
-
-        block.constrain {
-            height = basicHeightConstraint { text1.getBottom() - text1.getTop() + 20f }
-        }
     }
 
     override fun afterInitialization() {
@@ -88,9 +103,7 @@ class ModuleRelease(
             Window.enqueueRenderOperation {
                 block.constrain {
                     height = basicHeightConstraint {
-                        val top = text1.getTop()
-                        val bottom = changelog.getBottom()
-                        bottom - top + 20f
+                        changelog.getBottom() - text1.getTop() + 20f
                     }
                 }
             }

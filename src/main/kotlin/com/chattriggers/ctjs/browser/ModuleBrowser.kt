@@ -13,15 +13,15 @@ import gg.essential.elementa.constraints.animation.Animations
 import gg.essential.elementa.dsl.*
 import gg.essential.elementa.effects.ScissorEffect
 import gg.essential.elementa.state.BasicState
-import gg.essential.elementa.state.state
 import gg.essential.vigilance.gui.VigilancePalette
 
 object ModuleBrowser : WindowScreen(restoreCurrentGuiOnClose = true, newGuiScale = 2) {
-    var isLoggedIn by state(false)
-    var username = BasicState<String?>(null)
-    var id = BasicState<Int?>(null)
-    var rank = BasicState<String?>(null)
+    var isLoggedIn = ResettableState(false)
+    var username = ResettableState<String?>(null)
+    var id = ResettableState<Int?>(null)
+    var rank = ResettableState(WebsiteOwner.Rank.Default)
     private var displayedPage: Page = Page.Modules
+    var sessionCookie: String? = null
 
     init {
         UIBlock(VigilancePalette.getBackground()).constrain {
@@ -113,7 +113,7 @@ object ModuleBrowser : WindowScreen(restoreCurrentGuiOnClose = true, newGuiScale
 
         object Account : Page(1, UIContainer()) {
             override val component: UIContainer
-                get() = if (isLoggedIn) AccountPage else LoginPage
+                get() = if (isLoggedIn.get()) AccountPage else LoginPage
         }
 
         object Installed : Page(2, InstalledModulesPage)

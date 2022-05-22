@@ -16,7 +16,7 @@ class TextInput(password: Boolean = false) : UIContainer() {
     private var onTabAction: () -> Unit = {}
     private var onEnterAction: () -> Unit = {}
 
-    private val textHolder = UIBlock().constrain {
+    private val textHolder by UIBlock().constrain {
         width = 100.percent()
         height = ChildBasedSizeConstraint() + (PADDING * 2).pixels()
         color = VigilancePalette.getDarkHighlight().toConstraint()
@@ -25,10 +25,10 @@ class TextInput(password: Boolean = false) : UIContainer() {
         1f
     )
 
-    private val textInput = (if (password) UIPasswordInput() else UITextInput()).constrain {
+    private val textInput by (if (password) UIPasswordInput() else UITextInput()).constrain {
         x = PADDING.pixels()
         y = PADDING.pixels()
-        width = 100.percent() + (PADDING * 2).pixels()
+        width = 100.percent() - (PADDING * 2).pixels()
     } childOf textHolder
 
     init {
@@ -52,14 +52,6 @@ class TextInput(password: Boolean = false) : UIContainer() {
             textInput.setActive(true)
         }.onFocusLost {
             textInput.setActive(false)
-        }
-    }
-
-    override fun afterInitialization() {
-        super.afterInitialization()
-
-        textInput.constrain {
-            width = 100.percent() boundTo this@TextInput.parent
         }
     }
 

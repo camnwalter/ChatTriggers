@@ -1,6 +1,7 @@
 package com.chattriggers.ctjs.browser
 
 import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.browser.pages.AllModulesPage
 import com.chattriggers.ctjs.browser.pages.LoginPage
 import com.chattriggers.ctjs.utils.kotlin.fromJson
 import java.io.BufferedReader
@@ -11,7 +12,7 @@ import java.net.URL
 import java.net.URLEncoder
 
 object WebsiteAPI {
-    fun login(username: String, password: String): WebsiteOwner? {
+    fun login(username: String, password: String): LoginResponse? {
         val (code, res) = sendFormUrlEncodedRequest("${CTJS.WEBSITE_ROOT}/api/account/login") {
             put("username", username)
             put("password", password)
@@ -21,14 +22,14 @@ object WebsiteAPI {
             return null
 
         return try {
-            CTJS.gson.fromJson<WebsiteOwner>(res)
+            CTJS.gson.fromJson<LoginResponse>(res)
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
 
-    fun createAccount(username: String, email: String, password: String): WebsiteOwner? {
+    fun createAccount(username: String, email: String, password: String): LoginResponse? {
         val (code) = sendFormUrlEncodedRequest("${CTJS.WEBSITE_ROOT}/api/account/new") {
             put("username", username)
             put("email", email)
@@ -44,29 +45,6 @@ object WebsiteAPI {
         URL(url).openConnection().apply {
             setRequestProperty("User-Agent", "Mozilla/5.0")
         }.getInputStream().bufferedReader().readText()
-
-        ModuleBrowser.username.set(null)
-        ModuleBrowser.id.set(null)
-        ModuleBrowser.rank.set(null)
-
-        ModuleBrowser.isLoggedIn = false
-        LoginPage.clearInputs()
-        ModuleBrowser.showPage(ModuleBrowser.Page.Account)
-    }
-
-    fun getUserModules(id: Int, offset: Int): WebsiteResponse? {
-        val url = "${CTJS.WEBSITE_ROOT}/api/modules?owner=$id&offset=${offset * 10}"
-
-        return try {
-            val response = URL(url).openConnection().apply {
-                setRequestProperty("User-Agent", "Mozilla/5.0")
-            }.getInputStream().bufferedReader().readText()
-
-            CTJS.gson.fromJson(response)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
     }
 
     private fun sendFormUrlEncodedRequest(url: String, builder: PostRequestBuilder.() -> Unit): Response {
@@ -96,6 +74,8 @@ object WebsiteAPI {
             val text = BufferedReader(InputStreamReader(connection.inputStream)).use {
                 it.readText()
             }
+
+            ModuleBrowser.sessionCookie = connection.getHeaderField("Set-Cookie")
 
             return Response(200, text)
         } catch (e: Exception) {

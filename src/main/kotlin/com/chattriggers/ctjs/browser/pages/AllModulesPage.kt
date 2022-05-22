@@ -1,16 +1,14 @@
 package com.chattriggers.ctjs.browser.pages
 
 import com.chattriggers.ctjs.CTJS
-import com.chattriggers.ctjs.browser.BrowserEntry
-import com.chattriggers.ctjs.browser.BrowserSettings
-import com.chattriggers.ctjs.browser.NearestSiblingConstraint
-import com.chattriggers.ctjs.browser.WebsiteResponse
+import com.chattriggers.ctjs.browser.*
 import com.chattriggers.ctjs.utils.kotlin.fromJson
 import gg.essential.elementa.components.ScrollComponent
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIContainer
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.state.BasicState
 import gg.essential.elementa.transitions.SlideToTransition
 import gg.essential.vigilance.gui.VigilancePalette
 import gg.essential.vigilance.utils.onLeftClick
@@ -21,7 +19,8 @@ import kotlin.concurrent.thread
 
 object AllModulesPage : UIContainer() {
     private const val WEBSITE_MODULE_API = "https://chattriggers.com/api/modules/"
-    private var moduleOffset = 0
+    var page = 0
+    var totalModules = BasicState(0)
 
     private val modulesPageContainer by UIContainer().constrain {
         width = 100.percent()
@@ -63,8 +62,8 @@ object AllModulesPage : UIContainer() {
         loadModules()
 
         moduleContent.addScrollAdjustEvent(isHorizontal = false) { scrollPercentage, _ ->
-            if (scrollPercentage >= 0.9) {
-                moduleOffset++
+            if (scrollPercentage >= 0.9 && (page + 1) * 10 < totalModules.get()) {
+                page++
                 loadModules()
             }
         }
@@ -106,21 +105,33 @@ object AllModulesPage : UIContainer() {
             var url = WEBSITE_MODULE_API
 
             url += "?limit=10"
-            url += "&offset=${moduleOffset * 10}"
+            url += "&offset=${page * 10}"
             url += "&sort=${settings.sort.apiValue}"
+            url += "&flagged=${settings.filter == BrowserSettings.Filter.Flagged}"
+
+            if (settings.filter == BrowserSettings.Filter.User)
+                url += "&owner=${ModuleBrowser.id.get()}"
+
+            if (settings.filter == BrowserSettings.Filter.Trusted)
+                url += "&trusted=${settings.filter == BrowserSettings.Filter.Trusted}"
 
             if (settings.search.isNotBlank())
                 url += "&q=${URLEncoder.encode(settings.search.trim(), StandardCharsets.UTF_8.name())}"
 
             val result = URL(url).openConnection().apply {
                 setRequestProperty("User-Agent", "Mozilla/5.0")
+                if (ModuleBrowser.sessionCookie != null)
+                    setRequestProperty("Cookie", ModuleBrowser.sessionCookie)
             }.getInputStream().bufferedReader().readText()
 
             val response = CTJS.gson.fromJson<WebsiteResponse>(result)
+            totalModules.set(response.meta.total)
 
             Window.enqueueRenderOperation {
-                if (clearModules)
+                if (clearModules) {
+                    moduleContent.scrollToTop(smoothScroll = false)
                     moduleContent.clearChildren()
+                }
 
                 response.modules.forEach {
                     val entry = BrowserEntry(it)

@@ -119,11 +119,11 @@ object LoginPage : UIContainer() {
             WebsiteAPI.createAccount(username, email, password) ?: return
         }
 
+        AllModulesPage.page = 0
         ModuleBrowser.username.set(name)
         ModuleBrowser.id.set(id)
-        ModuleBrowser.rank.set(rank.name)
-
-        ModuleBrowser.isLoggedIn = true
+        ModuleBrowser.rank.set(rank)
+        ModuleBrowser.isLoggedIn.set(true)
         ModuleBrowser.showPage(ModuleBrowser.Page.Account)
     }
 

@@ -1,10 +1,8 @@
 package com.chattriggers.ctjs.browser.pages
 
-import com.chattriggers.ctjs.Reference
 import com.chattriggers.ctjs.browser.BrowserEntry
 import com.chattriggers.ctjs.browser.NearestSiblingConstraint
 import com.chattriggers.ctjs.browser.components.ButtonComponent
-import com.chattriggers.ctjs.browser.components.Modal
 import com.chattriggers.ctjs.browser.components.ModuleRelease
 import com.chattriggers.ctjs.browser.components.Tag
 import com.chattriggers.ctjs.commands.CTCommand
@@ -36,27 +34,6 @@ interface BrowserReleaseProvider {
 }
 
 class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) : UIContainer() {
-    private var clickedModule: BrowserModuleProvider? = null
-
-    private val modal by Modal() childOf this
-
-    private val confirmText by UIText("Do you want to import this module?").constrain {
-        x = CenterConstraint()
-        y = 10.pixels()
-        textScale = 2.pixels()
-        color = VigilancePalette.getBrightText().toConstraint()
-    } childOf modal
-
-    private val confirmButton by ButtonComponent("Yes").constrain {
-        x = CenterConstraint()
-        y = NearestSiblingConstraint(15f)
-    }.onClick {
-        Reference.conditionalThread {
-            CTCommand.import(clickedModule?.name ?: return@conditionalThread)
-            modal.fadeOut()
-        }
-    } childOf modal
-
     private val header by UIContainer().constrain {
         width = 100.percent()
     } childOf this
@@ -130,13 +107,13 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
 
             header.constrain {
                 height = basicHeightConstraint {
-                    tagContainer.getBottom() - title.getTop()
+                    tagContainer.getBottom() - it.getTop()
                 }
             }
         } else {
             header.constrain {
                 height = basicHeightConstraint {
-                    authorContainer.getBottom() - title.getTop()
+                    authorContainer.getBottom() - it.getTop()
                 }
             }
         }
@@ -165,13 +142,20 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
     }
 
     // TODO: What is this used for?
-    private val settings by UIImage.ofResource("/images/settings.png").constrain {
-        x = 10.pixels(alignOpposite = true)
-        y = 10.pixels()
-        width = 16.pixels()
-        height = 16.pixels()
-        color = Color.WHITE.toConstraint()
-    } childOf header
+//    private val settings by UIImage.ofResource("/images/settings.png").constrain {
+//        x = 10.pixels(alignOpposite = true)
+//        y = 10.pixels()
+//        width = 16.pixels()
+//        height = 16.pixels()
+//        color = Color.WHITE.toConstraint()
+//    } childOf header
+
+    private val downloadButton by ButtonComponent("Download").constrain {
+        x = 20.pixels(alignOpposite = true)
+        y = CenterConstraint()
+    }.onLeftClick {
+        CTCommand.import(module.name ?: return@onLeftClick)
+    }
 
     init {
         UIBlock(VigilancePalette.getDivider()).constrain {
@@ -209,6 +193,8 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
 
     init {
         if (module.releases.isNotEmpty()) {
+            downloadButton childOf header
+
             UIBlock(VigilancePalette.getDivider()).constrain {
                 x = 0.pixels()
                 y = NearestSiblingConstraint(15f)
@@ -223,14 +209,10 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             } childOf moduleContent
 
             module.releases.forEach {
-                val release = ModuleRelease(module, it).constrain {
+                ModuleRelease(module, it).constrain {
                     x = 30.pixels()
                     y = NearestSiblingConstraint(15f)
                     width = 100.percent() - 60.pixels()
-                }
-                release.onLeftClick {
-                    clickedModule = release.module
-                    modal.fadeIn()
                 } childOf moduleContent
             }
         }
@@ -241,6 +223,5 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             width = 100.percent()
             height = 100.percent()
         }
-        modal.hide()
     }
 }

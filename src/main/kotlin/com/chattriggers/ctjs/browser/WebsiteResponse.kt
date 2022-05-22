@@ -33,7 +33,6 @@ data class WebsiteOwner(
     val id: Int,
     val name: String,
     val rank: Rank,
-    val email: String,
 ) {
     enum class Rank {
         @SerializedName("admin")
@@ -44,6 +43,13 @@ data class WebsiteOwner(
         Default,
     }
 }
+
+data class LoginResponse(
+    val id: Int,
+    val name: String,
+    val rank: WebsiteOwner.Rank,
+    val email: String,
+)
 
 data class WebsiteRelease(
     val id: String,
