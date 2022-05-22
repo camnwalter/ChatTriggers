@@ -40,6 +40,8 @@ class JSDisplay : Display {
     override fun createDisplayLine(text: String): DisplayLine {
         return JSDisplayLine(text)
     }
+
+    override fun getLoader(): ILoader = JSLoader
 }
 
 class JSKeyBind : KeyBind {
