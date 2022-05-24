@@ -4,9 +4,10 @@ import com.chattriggers.ctjs.Reference
 import com.chattriggers.ctjs.browser.BrowserEntry
 import com.chattriggers.ctjs.browser.NearestSiblingConstraint
 import com.chattriggers.ctjs.browser.components.ButtonComponent
-import com.chattriggers.ctjs.browser.components.Modal
 import com.chattriggers.ctjs.engine.module.Module
 import com.chattriggers.ctjs.engine.module.ModuleManager
+import gg.essential.api.EssentialAPI
+import gg.essential.api.gui.buildConfirmationModal
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
@@ -53,22 +54,12 @@ object InstalledModulesPage : UIContainer() {
         height = 100.percent()
     } childOf moduleContentContainer
 
-    private val modal by Modal() childOf this
-
-    private val confirmText by UIText("Do you want to uninstall this module?").constrain {
-        x = CenterConstraint()
-        y = 10.pixels()
-        textScale = 2.pixels()
-        color = VigilancePalette.getWarning().toConstraint()
-    } childOf modal
-
-    private val confirmButton by ButtonComponent("Yes").constrain {
-        x = CenterConstraint()
-        y = NearestSiblingConstraint(15f)
-    }.onClick {
-        ModuleManager.deleteModule(clickedModule?.name ?: return@onClick)
-        modal.fadeOut()
-    } childOf modal
+    private val modal by EssentialAPI.getEssentialComponentFactory().buildConfirmationModal {
+        text = "Are you sure you want to uninstall this module?"
+        onConfirm = {
+            clickedModule?.let { ModuleManager.deleteModule(it.name) }
+        }
+    } childOf this
 
     init {
         constrain {
@@ -113,7 +104,7 @@ object InstalledModulesPage : UIContainer() {
                     y = 10.pixels()
                 }.onLeftClick {
                     clickedModule = module
-                    modal.fadeIn()
+                    modal.unhide()
                 } childOf entry
             }
         }

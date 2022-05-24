@@ -7,6 +7,8 @@ import com.chattriggers.ctjs.browser.components.ModuleRelease
 import com.chattriggers.ctjs.browser.components.Tag
 import com.chattriggers.ctjs.commands.CTCommand
 import com.chattriggers.ctjs.minecraft.wrappers.Player
+import gg.essential.api.EssentialAPI
+import gg.essential.api.gui.buildConfirmationModal
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
@@ -150,11 +152,18 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
 //        color = Color.WHITE.toConstraint()
 //    } childOf header
 
+    private val modal by EssentialAPI.getEssentialComponentFactory().buildConfirmationModal {
+        text = "Are you sure you want to import this module?"
+        onConfirm = {
+            module.name?.let(CTCommand::import)
+        }
+    } childOf this
+
     private val downloadButton by ButtonComponent("Download").constrain {
         x = 20.pixels(alignOpposite = true)
         y = CenterConstraint()
     }.onLeftClick {
-        CTCommand.import(module.name ?: return@onLeftClick)
+        modal.unhide()
     }
 
     init {
@@ -223,5 +232,6 @@ class ModulePage(private val module: BrowserModuleProvider, onBack: () -> Unit) 
             width = 100.percent()
             height = 100.percent()
         }
+        modal.hide()
     }
 }
