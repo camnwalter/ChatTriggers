@@ -10,7 +10,8 @@ import gg.essential.api.EssentialAPI
 import gg.essential.api.gui.buildConfirmationModal
 import gg.essential.elementa.components.*
 import gg.essential.elementa.constraints.CenterConstraint
-import gg.essential.elementa.constraints.ChildBasedMaxSizeConstraint
+import gg.essential.elementa.constraints.ChildBasedSizeConstraint
+import gg.essential.elementa.constraints.CopyConstraintFloat
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UMatrixStack
 import gg.essential.vigilance.gui.VigilancePalette
@@ -95,17 +96,48 @@ object InstalledModulesPage : UIContainer() {
             modules.addAll(ModuleManager.cachedModules)
 
             modules.forEach { module ->
-                val entry = BrowserEntry(module).constrain {
-                    height = ChildBasedMaxSizeConstraint()
-                } childOf moduleContent
+                val entry = BrowserEntry(module) childOf moduleContent
+
+                val requiresContainer by UIContainer().constrain {
+                    x = 10.pixels()
+                    y = NearestSiblingConstraint(10f)
+                    width = ChildBasedSizeConstraint()
+                    height = ChildBasedSizeConstraint()
+                } childOf entry.block
+
+                module.metadata.requires?.let {
+                    val requires = UIText("Requires: ").constrain {
+                        x = 0.pixels()
+                        y = 0.pixels()
+                        color = VigilancePalette.getMidText().toConstraint()
+                    } childOf requiresContainer
+
+                    UIText(it.joinToString(", ")).constrain {
+                        x = NearestSiblingConstraint()
+                        y = CopyConstraintFloat() boundTo requires
+                        color = VigilancePalette.getBrightText().toConstraint()
+                    } childOf requiresContainer
+                }
 
                 val removeModule by ButtonComponent("Delete").constrain {
                     x = 10.pixels(alignOpposite = true)
-                    y = 10.pixels()
+                    y = CenterConstraint()
                 }.onLeftClick {
                     clickedModule = module
                     modal.unhide()
                 } childOf entry
+
+                entry.descriptionContainer?.constrain {
+                    width = basicWidthConstraint {
+                        removeModule.getLeft() - it.getLeft() - 10f
+                    }
+                }
+
+                entry.constrain {
+                    height = ChildBasedSizeConstraint() - removeModule.getHeight().pixels()
+                }
+
+                entry.block.constrainYBasedOnChildren()
             }
         }
     }

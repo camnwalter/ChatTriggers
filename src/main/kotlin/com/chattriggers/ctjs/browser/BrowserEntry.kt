@@ -15,7 +15,7 @@ import gg.essential.elementa.markdown.TextConfig
 import gg.essential.vigilance.gui.VigilancePalette
 
 class BrowserEntry(val module: BrowserModuleProvider) : UIContainer() {
-    private val block by HighlightedBlock(
+    val block by HighlightedBlock(
         backgroundColor = VigilancePalette.getBackground(),
         highlightColor = VigilancePalette.getBrightHighlight(),
         backgroundHoverColor = VigilancePalette.getLightBackground(),
@@ -40,23 +40,24 @@ class BrowserEntry(val module: BrowserModuleProvider) : UIContainer() {
         color = VigilancePalette.getDarkText().toConstraint()
     } childOf block
 
+    private val description = module.description
+
+    val descriptionContainer = if (description != null) {
+        val container: UIContainer by UIContainer().constrain {
+            x = 10.pixels()
+            y = NearestSiblingConstraint(10f)
+            width = 100.percent() - 20.pixels()
+            height = ChildBasedSizeConstraint().coerceAtMost(100.pixels())
+        } childOf block
+
+        val desc by MarkdownComponent(description, markdownConfig).constrain {
+            width = 100.percent()
+        } childOf container
+
+        container
+    } else null
+
     init {
-        val description = module.description
-        val descriptionContainer = if (description != null) {
-            val descriptionContainer: UIContainer by UIContainer().constrain {
-                x = 10.pixels()
-                y = NearestSiblingConstraint(10f)
-                width = 100.percent() - 20.pixels()
-                height = ChildBasedSizeConstraint().coerceAtMost(100.pixels())
-            } childOf block
-
-            val desc by MarkdownComponent(description, markdownConfig).constrain {
-                width = 100.percent()
-            } childOf descriptionContainer
-
-            descriptionContainer
-        } else null
-
         constrain {
             y = NearestSiblingConstraint(20f)
             width = 100.percent()
