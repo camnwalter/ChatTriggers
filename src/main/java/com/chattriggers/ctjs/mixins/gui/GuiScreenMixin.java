@@ -3,7 +3,6 @@ package com.chattriggers.ctjs.mixins.gui;
 import com.chattriggers.ctjs.CTJS;
 import com.chattriggers.ctjs.minecraft.listeners.MouseListener;
 import com.chattriggers.ctjs.minecraft.listeners.events.CancellableEvent;
-import com.chattriggers.ctjs.minecraft.wrappers.chat.ChatStyle;
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.Item;
 import com.chattriggers.ctjs.triggers.EventType;
 import com.chattriggers.ctjs.triggers.TriggerType;
@@ -25,7 +24,6 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 //#elseif MC>=11701
 //$$ import com.mojang.blaze3d.vertex.PoseStack;
-//$$ import net.minecraft.network.chat.Style;
 //$$ import org.spongepowered.asm.mixin.Shadow;
 //#endif
 
@@ -112,8 +110,7 @@ public abstract class GuiScreenMixin {
     private void chattriggers_chatComponentClickedTrigger(IChatComponent component, CallbackInfoReturnable<Boolean> cir) {
         if (component != null) {
             CancellableEvent event = new CancellableEvent();
-            // TODO(BREAKING): Pass in ChatStyle instead of UTextComponent
-            TriggerType.ChatComponentClicked.triggerAll(new ChatStyle(component.getChatStyle()), event);
+            TriggerType.ChatComponentClicked.triggerAll(new UTextComponent(component), event);
             if (event.isCanceled())
                 cir.setReturnValue(false);
         }
@@ -122,8 +119,7 @@ public abstract class GuiScreenMixin {
     @Inject(method = "handleComponentHover", at = @At("HEAD"), cancellable = true)
     private void chattriggers_chatComponentHoveredTrigger(IChatComponent component, int x, int y, CallbackInfo ci) {
         if (component != null) {
-            // TODO(BREAKING): Pass in ChatStyle instead of UTextComponent
-            TriggerType.ChatComponentHovered.triggerAll(new ChatStyle(component.getChatStyle()), x, y, ci);
+            TriggerType.ChatComponentHovered.triggerAll(new UTextComponent(component), x, y, ci);
         }
     }
 
@@ -165,23 +161,6 @@ public abstract class GuiScreenMixin {
     //$$ @Shadow
     //$$ private ItemStack tooltipStack;
     //#endif
-    //$$
-    //$$ @Inject(method = "handleComponentClicked", at = @At("HEAD"), cancellable = true)
-    //$$ private void chattriggers_chatComponentClickedTrigger(Style arg, CallbackInfoReturnable<Boolean> cir) {
-    //$$     if (arg != null) {
-    //$$         CancellableEvent event = new CancellableEvent();
-    //$$         TriggerType.ChatComponentClicked.triggerAll(new ChatStyle(arg), event);
-    //$$         if (event.isCanceled())
-    //$$             cir.setReturnValue(false);
-    //$$     }
-    //$$ }
-    //$$
-    //$$ @Inject(method = "renderComponentHoverEffect", at = @At("HEAD"), cancellable = true)
-    //$$ private void chattriggers_chatComponentHoveredTrigger(PoseStack arg, Style arg2, int i, int j, CallbackInfo ci) {
-    //$$     if (arg != null) {
-    //$$         TriggerType.ChatComponentHovered.triggerAll(new ChatStyle(arg2), i, j, ci);
-    //$$     }
-    //$$ }
     //$$
     //$$ @Inject(
     //$$     method = "renderTooltip(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/item/ItemStack;II)V",

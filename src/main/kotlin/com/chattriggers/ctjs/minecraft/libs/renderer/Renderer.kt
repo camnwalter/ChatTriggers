@@ -934,7 +934,8 @@ object Renderer {
         popMatrix()
     }
 
-    // TODO(VERIFY)
+    // TODO(CONVERT): Somehow allow ability to scale, translate, etc? It uses a new stack so idk how that
+    //                would be possible.
     @JvmStatic
     @JvmOverloads
     fun drawPlayer(
@@ -949,9 +950,9 @@ object Renderer {
         showArrows: Boolean = true,
         // TODO(CONVERT) Add the rest of the layers as options in an object.
         //#if MC>=11701
-        //$$ showParrot: Boolean,
-        //$$ showSpinAttack: Boolean,
-        //$$ showBeeStinger: Boolean,
+        //$$ showParrot: Boolean = true,
+        //$$ showSpinAttack: Boolean = true,
+        //$$ showBeeStinger: Boolean = true,
         //#endif
     ) {
         val mouseX = -30f
@@ -976,7 +977,7 @@ object Renderer {
         rotate(45.0f, 0.0f, 1.0f, 0.0f)
         rotate(-45.0f, 0.0f, 1.0f, 0.0f)
         rotate(-atan(mouseY / 40.0f) * 20.0f, 1.0f, 0.0f, 0.0f)
-        scale(-1f, 1f)
+        scale(-30f, 30f)
         if (!rotate) {
             entity.renderYawOffset = atan(mouseX / 40.0f) * 20.0f
             entity.rotationYaw = atan(mouseX / 40.0f) * 40.0f
@@ -1022,7 +1023,7 @@ object Renderer {
         //$$ RenderSystem.applyModelViewMatrix()
         //$$ val newStack = PoseStack()
         //$$ newStack.translate(0.0, 0.0, 1000.0)
-        //$$ newStack.scale(-1f, 1f, 1f)
+        //$$ newStack.scale(-30f, 30f, 30f)
         //$$
         //$$ val zRot = Vector3f.ZP.rotationDegrees(180.0f)
         //$$ val xRot = Vector3f.XP.rotationDegrees(newPitch * 20.0f)
@@ -1036,8 +1037,8 @@ object Renderer {
         //$$ val yawHead = entity.yHeadRot
         //$$
         //$$ if (!rotate) {
-        //$$     entity.yBodyRot = 180.0f + newYaw * 20.0f
-        //$$     entity.yRot = 180.0f + newYaw * 40.0f
+        //$$     entity.yBodyRot = newYaw * 20.0f
+        //$$     entity.yRot = newYaw * 40.0f
         //$$     entity.xRot = -newPitch * 20.0f
         //$$     entity.yHeadRot = entity.yRot
         //$$     entity.yHeadRotO = entity.yRot
