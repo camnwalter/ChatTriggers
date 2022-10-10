@@ -1,7 +1,7 @@
 package com.chattriggers.ctjs.minecraft.wrappers.entity
 
-import com.chattriggers.ctjs.minecraft.wrappers.world.PotionEffect
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.Item
+import com.chattriggers.ctjs.minecraft.wrappers.world.PotionEffect
 import com.chattriggers.ctjs.utils.kotlin.MCEntity
 import com.chattriggers.ctjs.utils.kotlin.MCEntityLivingBase
 import net.minecraft.potion.Potion

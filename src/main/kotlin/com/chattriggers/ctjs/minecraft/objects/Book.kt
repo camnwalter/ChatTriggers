@@ -6,7 +6,10 @@ import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagCompound
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagList
-import com.chattriggers.ctjs.utils.kotlin.*
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagCompound
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagList
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagString
+import com.chattriggers.ctjs.utils.kotlin.MCTextComponentSerializer
 import net.minecraft.client.gui.GuiScreenBook
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack

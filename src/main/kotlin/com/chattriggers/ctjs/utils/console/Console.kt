@@ -12,7 +12,10 @@ import java.awt.event.KeyListener
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
-import javax.swing.*
+import javax.swing.JFrame
+import javax.swing.JScrollPane
+import javax.swing.JTextPane
+import javax.swing.SwingUtilities
 import javax.swing.text.DefaultCaret
 
 class Console(val loader: ILoader?) {

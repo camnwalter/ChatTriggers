@@ -3,7 +3,6 @@ package com.chattriggers.ctjs.minecraft.libs
 import com.chattriggers.ctjs.CTJS
 import com.chattriggers.ctjs.utils.Config
 import java.io.*
-import java.net.URL
 import java.net.UnknownHostException
 import java.nio.charset.Charset
 import java.util.*

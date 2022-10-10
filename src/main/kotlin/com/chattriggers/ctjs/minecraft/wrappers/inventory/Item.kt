@@ -8,7 +8,10 @@ import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.minecraft.wrappers.entity.Entity
 import com.chattriggers.ctjs.minecraft.wrappers.inventory.nbt.NBTTagCompound
 import com.chattriggers.ctjs.minecraft.wrappers.world.block.BlockType
-import com.chattriggers.ctjs.utils.kotlin.*
+import com.chattriggers.ctjs.utils.kotlin.MCItem
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagCompound
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagList
+import com.chattriggers.ctjs.utils.kotlin.MCNBTTagString
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.enchantment.Enchantment

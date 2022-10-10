@@ -1,8 +1,6 @@
 package com.chattriggers.ctjs.utils.kotlin
 
 import com.fasterxml.jackson.core.Version
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.mozilla.javascript.NativeObject
 
 fun MCITextComponent.getStyling(): MCTextStyle =

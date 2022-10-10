@@ -1,8 +1,8 @@
 package com.chattriggers.ctjs.minecraft.objects.display
 
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.GuiScreenEvent
+import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.util.concurrent.CopyOnWriteArrayList
