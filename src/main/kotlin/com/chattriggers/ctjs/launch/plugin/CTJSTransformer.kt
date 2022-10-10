@@ -40,7 +40,6 @@ class CTJSTransformer : BaseClassTransformer() {
             injectGuiIngameForge()
             injectRenderItem()
             ModuleManager.setup()
-            ModuleManager.asmPass()
         } catch (e: Throwable) {
             e.printStackTrace()
         }
