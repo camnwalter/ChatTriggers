@@ -12,26 +12,43 @@ import com.chattriggers.ctjs.printTraceToConsole
 import com.chattriggers.ctjs.triggers.TriggerType
 import com.chattriggers.ctjs.utils.Config
 import com.chattriggers.ctjs.utils.console.Console
+import com.chattriggers.ctjs.utils.kotlin.toVersion
 import org.apache.commons.io.FileUtils
 import org.mozilla.javascript.Context
 import java.io.File
 import java.net.URLClassLoader
+import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import java.util.*
 
 object ModuleManager {
     private val loaders = listOf(JSLoader)
     val generalConsole = Console(null)
-    val cachedModules = mutableListOf<Module>()
+    val cachedModules = TreeSet<Module> { o1, o2 ->
+        o1.name.compareTo(o2.name)
+    }
     val modulesFolder = run {
         Config.loadData()
         File(Config.modulesFolder)
     }
-    val pendingOldModules = mutableListOf<Module>()
+    val pendingOldModules = mutableSetOf<Module>()
+
+    private fun importPendingModules() {
+        val toDownload = File(modulesFolder, ".to_download.txt")
+        if (!toDownload.exists()) return
+
+        toDownload.readText().split(",").filter(String::isBlank).forEach(::importModule)
+
+        toDownload.delete()
+    }
 
     fun setup() {
         modulesFolder.mkdirs()
 
         // Download pending modules
-        ModuleUpdater.importPendingModules()
+        importPendingModules()
 
         // Get existing modules
         val installedModules = getFoldersInDir(modulesFolder).map(::parseModule).distinctBy {
@@ -44,7 +61,7 @@ object ModuleManager {
 
         // Import required modules
         installedModules.distinct().forEach { module ->
-            module.metadata.requires?.forEach { ModuleUpdater.importModule(it, module.name) }
+            module.metadata.requires?.forEach { getRequiredModules(it, module.name) }
         }
 
         // Load their assets
@@ -70,7 +87,7 @@ object ModuleManager {
         }
     }
 
-    fun entryPass(modules: List<Module> = cachedModules, completionListener: (percentComplete: Float) -> Unit = {}) {
+    fun entryPass(modules: TreeSet<Module> = cachedModules, completionListener: (percentComplete: Float) -> Unit = {}) {
         loaders.forEach(ILoader::entrySetup)
 
         val total = modules.count { it.metadata.entry != null }
@@ -97,7 +114,7 @@ object ModuleManager {
         } ?: listOf()
     }
 
-    fun parseModule(directory: File): Module {
+    private fun parseModule(directory: File): Module {
         val metadataFile = File(directory, "metadata.json")
         var metadata = ModuleMetadata()
 
@@ -115,7 +132,7 @@ object ModuleManager {
     data class ImportedModule(val module: Module?, val dependencies: List<Module>)
 
     fun importModule(moduleName: String): ImportedModule {
-        val newModules = ModuleUpdater.importModule(moduleName)
+        val newModules = getRequiredModules(moduleName)
 
         // Load their assets
         loadAssets(newModules)
@@ -125,17 +142,85 @@ object ModuleManager {
             it.metadata.entry = it.metadata.entry?.let(FileLib::normalizeFilePath)
         }
 
-        // TODO: Print warning to console if metadatas contain an asm key
-
         entryPass(newModules)
 
-        return ImportedModule(newModules.getOrNull(0), newModules.drop(1))
+        return ImportedModule(newModules.first(), newModules.drop(1))
+    }
+
+    private fun getRequiredModules(moduleName: String, requiredBy: String? = null): TreeSet<Module> {
+        val alreadyImported = cachedModules.any {
+            if (it.name == moduleName) {
+                if (requiredBy != null) {
+                    it.metadata.isRequired = true
+                    it.requiredBy.add(requiredBy)
+                }
+
+                true
+            } else false
+        }
+
+        if (alreadyImported) return TreeSet<Module>()
+
+        val (realName, modVersion) = downloadModule(moduleName) ?: return TreeSet<Module>()
+
+        val moduleDir = File(modulesFolder, realName)
+        val module = parseModule(moduleDir)
+        module.targetModVersion = modVersion.toVersion()
+
+        if (requiredBy != null) {
+            module.metadata.isRequired = true
+            module.requiredBy.add(requiredBy)
+        }
+
+        cachedModules.add(module)
+
+        val set = TreeSet(module.metadata.requires?.flatMap {
+            getRequiredModules(it, module.name)
+        } ?: listOf())
+        set.add(module)
+
+        return set
+    }
+
+    data class DownloadResult(val name: String, val modVersion: String)
+
+    fun downloadModule(name: String): DownloadResult? {
+        val downloadZip = File(modulesFolder, "currDownload.zip")
+
+        try {
+            val url = "${CTJS.WEBSITE_ROOT}/api/modules/$name/scripts?modVersion=${Reference.MODVERSION}"
+            val connection = CTJS.makeWebRequest(url)
+            FileUtils.copyInputStreamToFile(connection.getInputStream(), downloadZip)
+            FileSystems.newFileSystem(downloadZip.toPath(), null).use {
+                val rootFolder = Files.newDirectoryStream(it.rootDirectories.first()).iterator()
+                if (!rootFolder.hasNext()) throw Exception("Too small")
+                val moduleFolder = rootFolder.next()
+                if (rootFolder.hasNext()) throw Exception("Too big")
+
+                val realName = moduleFolder.fileName.toString().trimEnd(File.separatorChar)
+                File(modulesFolder, realName).apply { mkdir() }
+                Files.walk(moduleFolder).forEach { path ->
+                    val resolvedPath = Paths.get(modulesFolder.toString(), path.toString())
+                    if (Files.isDirectory(resolvedPath)) {
+                        return@forEach
+                    }
+                    Files.copy(path, resolvedPath, StandardCopyOption.REPLACE_EXISTING)
+                }
+                return DownloadResult(realName, connection.getHeaderField("CT-Version"))
+            }
+        } catch (exception: Exception) {
+            exception.printTraceToConsole()
+        } finally {
+            downloadZip.delete()
+        }
+
+        return null
     }
 
     fun deleteModule(name: String): Boolean {
-        val module = cachedModules.find { it.name.lowercase() == name.lowercase() } ?: return false
+        val module = cachedModules.find { it.name.equals(name, ignoreCase = true) } ?: return false
 
-        val file = File(modulesFolder, module.name)
+        val file = File(modulesFolder, module.folder.name)
         if (!file.exists()) throw IllegalStateException("Expected module to have an existing folder!")
 
         val context = JSContextFactory.enterContext()
@@ -164,11 +249,13 @@ object ModuleManager {
     }
 
     fun reportOldVersion(module: Module) {
-        ChatLib.chat("&cWarning: the module \"${module.name}\" was made for an older version of CT, " +
-                "so it may not work correctly.")
+        ChatLib.chat(
+            "&cWarning: the module \"${module.name}\" was made for an older version of CT, " +
+                    "so it may not work correctly."
+        )
     }
 
-    private fun loadAssets(modules: List<Module>) {
+    private fun loadAssets(modules: Set<Module>) {
         modules.map {
             File(it.folder, "assets")
         }.filter {
