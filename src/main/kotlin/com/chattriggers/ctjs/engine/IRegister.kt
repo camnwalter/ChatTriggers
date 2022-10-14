@@ -949,69 +949,6 @@ interface IRegister {
     }
 
     /**
-     * Registers a new trigger that runs whenever the mouse is clicked with a
-     * gui open
-     *
-     * Passes through five arguments:
-     * - The mouse x position
-     * - The mouse y position
-     * - The mouse button
-     * - The gui
-     * - The event, which can be cancelled
-     *
-     * Available modifications:
-     * - [Trigger.setPriority] Sets the priority
-     *
-     * @param method The method to call when the event is fired
-     * @return The trigger for additional modification
-     */
-    fun registerGuiMouseClick(method: Any): EventTrigger {
-        return EventTrigger(method, TriggerType.GuiMouseClick, getImplementationLoader())
-    }
-
-    /**
-     * Registers a new trigger that runs whenever a mouse button is released
-     * with a gui open
-     *
-     * Passes through five arguments:
-     * - The mouse x position
-     * - The mouse y position
-     * - The mouse button
-     * - The gui
-     * - The event, which can be cancelled
-     *
-     * Available modifications:
-     * - [Trigger.setPriority] Sets the priority
-     *
-     * @param method The method to call when the event is fired
-     * @return The trigger for additional modification
-     */
-    fun registerGuiMouseRelease(method: Any): EventTrigger {
-        return EventTrigger(method, TriggerType.GuiMouseRelease, getImplementationLoader())
-    }
-
-    /**
-     * Registers a new trigger that runs whenever a mouse button held and dragged
-     * with a gui open
-     *
-     * Passes through five arguments:
-     * - The mouse x position
-     * - The mouse y position
-     * - The mouse button
-     * - The gui
-     * - The event, which can be cancelled
-     *
-     * Available modifications:
-     * - [Trigger.setPriority] Sets the priority
-     *
-     * @param method The method to call when the event is fired
-     * @return The trigger for additional modification
-     */
-    fun registerGuiMouseDrag(method: Any): EventTrigger {
-        return EventTrigger(method, TriggerType.GuiMouseDrag, getImplementationLoader())
-    }
-
-    /**
      * Registers a new trigger that runs whenever a packet is sent from the client to the server
      *
      * Passes through two arguments:

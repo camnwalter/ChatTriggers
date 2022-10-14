@@ -1,3 +1,5 @@
 - Remove console themes
 - Remove asm support for modules
 - Assets folder is renamed to `assets` instead of `images`
+- Removed guiMouseDrag, guiMouseClick, and guiMouseRelease triggers.
+  - Use normal click and drag triggers instead
