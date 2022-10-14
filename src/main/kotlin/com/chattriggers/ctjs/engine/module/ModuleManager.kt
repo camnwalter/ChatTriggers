@@ -52,7 +52,7 @@ object ModuleManager {
 
         // Normalize all metadata
         cachedModules.forEach {
-            it.metadata.entry = it.metadata.entry?.replace('/', File.separatorChar)?.replace('\\', File.separatorChar)
+            it.metadata.entry = it.metadata.entry?.let(FileLib::normalizeFilePath)
         }
 
         // Get all jars
@@ -122,7 +122,7 @@ object ModuleManager {
 
         // Normalize all metadata
         newModules.forEach {
-            it.metadata.entry = it.metadata.entry?.replace('/', File.separatorChar)?.replace('\\', File.separatorChar)
+            it.metadata.entry = it.metadata.entry?.let(FileLib::normalizeFilePath)
         }
 
         // TODO: Print warning to console if metadatas contain an asm key
@@ -176,7 +176,10 @@ object ModuleManager {
         }.map {
             it.listFiles()?.toList() ?: emptyList()
         }.flatten().forEach {
-            FileUtils.copyFileToDirectory(it, CTJS.assetsDir)
+            if (it.isFile)
+                FileUtils.copyFileToDirectory(it, CTJS.assetsDir)
+            else
+                FileUtils.copyDirectory(it, File(CTJS.assetsDir, it.name))
         }
     }
 

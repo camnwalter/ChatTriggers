@@ -1,6 +1,7 @@
 package com.chattriggers.ctjs.minecraft.libs.renderer
 
 import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.minecraft.libs.FileLib
 import net.minecraft.client.renderer.texture.DynamicTexture
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.common.MinecraftForge
@@ -123,7 +124,7 @@ class Image(var image: BufferedImage?) {
         }
 
         private fun getBufferedImage(name: String, url: String? = null): BufferedImage? {
-            val resourceFile = File(CTJS.assetsDir, name)
+            val resourceFile = File(CTJS.assetsDir, FileLib.normalizeFilePath(name))
 
             if (resourceFile.exists())
                 return ImageIO.read(resourceFile)

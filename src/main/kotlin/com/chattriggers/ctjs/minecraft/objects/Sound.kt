@@ -1,6 +1,7 @@
 package com.chattriggers.ctjs.minecraft.objects
 
 import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.minecraft.libs.FileLib
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.minecraft.wrappers.World
@@ -86,7 +87,7 @@ class Sound(private val config: NativeObject) {
         val loop = config.getOrDefault("loop", false) as Boolean
         val stream = config.getOrDefault("stream", false) as Boolean
 
-        val url = File(CTJS.assetsDir, source).toURI().toURL()
+        val url = File(CTJS.assetsDir, FileLib.normalizeFilePath(source)).toURI().toURL()
         val x = (config.getOrDefault("x", Player.getX()) as Number).toFloat()
         val y = (config.getOrDefault("y", Player.getY()) as Number).toFloat()
         val z = (config.getOrDefault("z", Player.getZ()) as Number).toFloat()

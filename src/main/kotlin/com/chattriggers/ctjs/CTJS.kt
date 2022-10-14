@@ -41,7 +41,7 @@ object CTJS {
     const val WEBSITE_ROOT = "https://www.chattriggers.com"
     val gson = Gson()
     val configLocation = File("./config")
-    val assetsDir = File(configLocation, "ChatTriggers/images/").apply { mkdirs() }
+    val assetsDir = File(configLocation, "ChatTriggers/assets/").apply { mkdirs() }
     val sounds = mutableListOf<Sound>()
     val images = mutableSetOf<Image>()
 

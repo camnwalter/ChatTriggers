@@ -290,4 +290,7 @@ object FileLib {
     fun decodeBase64(toDecode: String): String {
         return String(Base64.getDecoder().decode(toDecode))
     }
+
+    @JvmStatic
+    fun normalizeFilePath(path: String) = path.replace('/', File.separatorChar).replace('\\', File.separatorChar)
 }
