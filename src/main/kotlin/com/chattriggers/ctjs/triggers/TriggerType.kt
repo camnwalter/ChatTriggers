@@ -58,7 +58,6 @@ enum class TriggerType {
     RenderTitle,
     RenderEntity,
     PostGuiRender,
-    PreItemRender,
     RenderItemIntoGui,
     RenderItemOverlayIntoGui,
     RenderSlotHighlight,
@@ -77,7 +76,6 @@ enum class TriggerType {
     BlockBreak,
     SpawnParticle,
     EntityDeath,
-    EntityDamage,
 
     // misc
     Command,

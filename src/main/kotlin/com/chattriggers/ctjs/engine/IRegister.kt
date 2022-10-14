@@ -873,20 +873,6 @@ interface IRegister {
     }
 
     /**
-     * Registers a new trigger that runs before an entity is damaged
-     *
-     * Passes through two arguments:
-     * - The target Entity that is damaged
-     * - The PlayerMP attacker
-     *
-     * @param method The method to call when the event is fired
-     * @return The trigger for additional modification
-     */
-    fun registerEntityDamage(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.EntityDamage, getImplementationLoader())
-    }
-
-    /**
      * Registers a new trigger that runs before an entity dies
      *
      * Passes through one argument:
@@ -1144,25 +1130,6 @@ interface IRegister {
      */
     fun registerPostGuiRender(method: Any): RegularTrigger {
         return RegularTrigger(method, TriggerType.PostGuiRender, getImplementationLoader())
-    }
-
-    /**
-     * Registers a new trigger that runs before the items in the gui are drawn
-     *
-     * Passes through five arguments:
-     * - The mouseX position
-     * - The mouseY position
-     * - The MC Slot
-     * - The GuiContainer
-     *
-     * Available modifications:
-     * - [Trigger.setPriority] Sets the priority
-     *
-     * @param method The method to call when the event is fired
-     * @return The trigger for additional modification
-     */
-    fun registerPreItemRender(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.PreItemRender, getImplementationLoader())
     }
 
     /**

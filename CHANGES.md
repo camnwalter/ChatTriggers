@@ -4,3 +4,7 @@
 - Removed guiMouseDrag, guiMouseClick, and guiMouseRelease triggers.
   - Use normal click and drag triggers instead
 - Renamed a ton of triggers to use present tense. Very breaking.
+- Removed entityDamage trigger
+  - Use attackEntity instead
+- Removed preItemRender
+  - Use postGuiRender instead

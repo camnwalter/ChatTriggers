@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.GlStateManager
 
 fun injectGuiContainer() {
     injectDrawSlot()
-    injectDrawForeground()
     injectDrawSlotHighlight()
 }
 
@@ -44,46 +43,6 @@ fun injectDrawSlot() = inject {
 
             if (event.isCancelled()) {
                 methodReturn()
-            }
-        }
-    }
-}
-
-fun injectDrawForeground() = inject {
-    className = "net/minecraft/client/gui/inventory/GuiContainer"
-    methodName = "drawScreen"
-    methodDesc = "(IIF)V"
-
-    at = At(
-        InjectionPoint.INVOKE(
-            Descriptor(
-                GUI_CONTAINER,
-                "drawGuiContainerForegroundLayer",
-                "(II)V"
-            )
-        ),
-        before = false
-    )
-
-    methodMaps = mapOf(
-        "func_73863_a" to "drawScreen",
-        "func_146979_b" to "drawGuiContainerForegroundLayer"
-    )
-
-    fieldMaps = mapOf("theSlot" to "field_147006_u")
-
-    codeBlock {
-        val theSlot = shadowField<MCSlot?>()
-
-        val local0 = shadowLocal<GuiContainer>()
-        val local1 = shadowLocal<Int>()
-        val local2 = shadowLocal<Int>()
-
-        code {
-            if (theSlot != null) {
-                GlStateManager.pushMatrix()
-                TriggerType.PreItemRender.triggerAll(local1, local2, theSlot, local0)
-                GlStateManager.popMatrix()
             }
         }
     }
