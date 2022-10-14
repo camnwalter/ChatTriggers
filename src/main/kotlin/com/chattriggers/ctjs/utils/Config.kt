@@ -96,20 +96,6 @@ object Config : Vigilant(File(CTJS.configLocation, "ChatTriggers.toml"), sorting
     var consoleFontSize = 9
 
     @Property(
-        PropertyType.SWITCH,
-        name = "Use custom console theme",
-        category = "Console",
-    )
-    var customTheme = false
-
-    @Property(
-        PropertyType.TEXT,
-        name = "Console custom theme",
-        category = "Console",
-    )
-    var consoleTheme = "default.dark"
-
-    @Property(
         PropertyType.COLOR,
         name = "Console foreground color",
         category = "Console",
@@ -121,7 +107,7 @@ object Config : Vigilant(File(CTJS.configLocation, "ChatTriggers.toml"), sorting
         name = "Console background color",
         category = "Console",
     )
-    var consoleBackgroundColor = Color(21, 21, 21)
+    var consoleBackgroundColor = Color(41, 49, 52)
 
     @Property(
         PropertyType.SWITCH,

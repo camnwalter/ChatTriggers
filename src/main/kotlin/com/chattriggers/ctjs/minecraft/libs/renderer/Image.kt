@@ -95,7 +95,7 @@ class Image(var image: BufferedImage?) {
          * if the file cannot be found.
          */
         @JvmStatic
-        fun fromFile(file: File) =  Image(file)
+        fun fromFile(file: File) = Image(file)
 
         /**
          * Create an image object from a file path. Throws an exception

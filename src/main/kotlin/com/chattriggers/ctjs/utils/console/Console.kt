@@ -186,76 +186,8 @@ class Console(val loader: ILoader?) {
     fun showConsole() {
         frame.isVisible = true
 
-        val bg: Color
-        val fg: Color
-
-        if (Config.customTheme) {
-            bg = Config.consoleBackgroundColor
-            fg = Config.consoleForegroundColor
-        } else {
-            when (Config.consoleTheme) {
-                "ashes.dark" -> {
-                    bg = Color(28, 32, 35)
-                    fg = Color(199, 204, 209)
-                }
-                "atelierforest.dark" -> {
-                    bg = Color(28, 32, 35)
-                    fg = Color(199, 204, 209)
-                }
-                "isotope.dark" -> {
-                    bg = Color(0, 0, 0)
-                    fg = Color(208, 208, 208)
-                }
-                "codeschool.dark" -> {
-                    bg = Color(22, 27, 29)
-                    fg = Color(126, 162, 180)
-                }
-                "gotham" -> {
-                    bg = Color(10, 15, 20)
-                    fg = Color(152, 209, 206)
-                }
-                "hybrid" -> {
-                    bg = Color(29, 31, 33)
-                    fg = Color(197, 200, 198)
-                }
-                "3024.light" -> {
-                    bg = Color(247, 247, 247)
-                    fg = Color(74, 69, 67)
-                }
-                "chalk.light" -> {
-                    bg = Color(245, 245, 245)
-                    fg = Color(48, 48, 48)
-                }
-                "blue" -> {
-                    bg = Color(15, 18, 32)
-                    fg = Color(221, 223, 235)
-                }
-                "slate" -> {
-                    bg = Color(33, 36, 41)
-                    fg = Color(193, 199, 208)
-                }
-                "red" -> {
-                    bg = Color(26, 9, 11)
-                    fg = Color(231, 210, 212)
-                }
-                "green" -> {
-                    bg = Color(6, 10, 10)
-                    fg = Color(47, 227, 149)
-                }
-                "aids" -> {
-                    bg = Color(251, 251, 28)
-                    fg = Color(192, 20, 214)
-                }
-                "default.dark" -> {
-                    bg = Color(41, 49, 52)
-                    fg = Color(208, 208, 208)
-                }
-                else -> {
-                    bg = Color(21, 21, 21)
-                    fg = Color(208, 208, 208)
-                }
-            }
-        }
+        val bg = Config.consoleBackgroundColor
+        val fg = Config.consoleForegroundColor
 
         for (comp in components) {
             comp.background = bg
@@ -264,6 +196,7 @@ class Console(val loader: ILoader?) {
 
         frame.toFront()
         frame.repaint()
+        frame.revalidate()
 
         val chosenFont =
             if (Config.consoleFiraCodeFont) FIRA_FONT.deriveFont(Config.consoleFontSize.toFloat()) else Font(
@@ -280,6 +213,7 @@ class Console(val loader: ILoader?) {
 
         frame.toFront()
         frame.repaint()
+        frame.revalidate()
     }
 
     companion object {
