@@ -106,7 +106,7 @@ fun injectDisplayGuiScreen() = inject {
 
     codeBlock {
         code {
-            TriggerType.GuiClosed.triggerAll(Minecraft.getMinecraft().currentScreen)
+            TriggerType.GuiClose.triggerAll(Minecraft.getMinecraft().currentScreen)
         }
     }
 }

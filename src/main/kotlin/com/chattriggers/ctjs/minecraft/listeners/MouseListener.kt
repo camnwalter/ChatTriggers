@@ -53,9 +53,9 @@ object MouseListener {
     }
 
     fun registerTriggerListeners() {
-        registerScrollListener(TriggerType.Scrolled::triggerAll)
-        registerClickListener(TriggerType.Clicked::triggerAll)
-        registerDraggedListener(TriggerType.Dragged::triggerAll)
+        registerScrollListener(TriggerType.Scroll::triggerAll)
+        registerClickListener(TriggerType.Click::triggerAll)
+        registerDraggedListener(TriggerType.Drag::triggerAll)
     }
 
     private fun process(button: Int, dWheel: Int) {

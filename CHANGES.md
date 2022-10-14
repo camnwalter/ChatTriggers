@@ -3,3 +3,4 @@
 - Assets folder is renamed to `assets` instead of `images`
 - Removed guiMouseDrag, guiMouseClick, and guiMouseRelease triggers.
   - Use normal click and drag triggers instead
+- Renamed a ton of triggers to use present tense. Very breaking.

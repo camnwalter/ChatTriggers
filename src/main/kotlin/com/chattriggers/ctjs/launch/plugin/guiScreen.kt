@@ -97,7 +97,7 @@ fun injectTextComponentClick() = inject {
         code {
             if (local1 != null) {
                 val event = CancellableEvent()
-                TriggerType.ChatComponentClicked.triggerAll(TextComponent(local1), event)
+                TriggerType.ChatComponentClick.triggerAll(TextComponent(local1), event)
                 if (event.isCancelled())
                     iReturn(0)
             }
@@ -120,7 +120,7 @@ fun injectTextComponentHover() = inject {
 
         code {
             val event = CancellableEvent()
-            TriggerType.ChatComponentHovered.triggerAll(local1?.let(::TextComponent), local2, local3, event)
+            TriggerType.ChatComponentHover.triggerAll(local1?.let(::TextComponent), local2, local3, event)
             if (event.isCancelled())
                 methodReturn()
         }

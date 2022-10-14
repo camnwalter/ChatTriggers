@@ -37,15 +37,11 @@ object ClientListener {
     val chatHistory = mutableListOf<String>()
     val actionBarHistory = mutableListOf<String>()
     private val tasks = CopyOnWriteArrayList<Task>()
-    private var packetContext: Context
-
-    class Task(var delay: Int, val callback: () -> Unit)
-
-    init {
-        ticksPassed = 0
-        packetContext = JSContextFactory.enterContext()
+    private val packetContext: Context = JSContextFactory.enterContext().also {
         Context.exit()
     }
+
+    class Task(var delay: Int, val callback: () -> Unit)
 
     @SubscribeEvent
     fun onReceiveChat(event: ClientChatReceivedEvent) {
@@ -93,8 +89,7 @@ object ClientListener {
         if (!World.isLoaded())
             return
 
-        TriggerType.Tick.triggerAll(ticksPassed)
-        ticksPassed++
+        TriggerType.Tick.triggerAll(ticksPassed++)
 
         Scoreboard.resetCache()
     }
@@ -181,7 +176,7 @@ object ClientListener {
 
     @SubscribeEvent
     fun onGuiOpened(event: GuiOpenEvent) {
-        if (event.gui != null) TriggerType.GuiOpened.triggerAll(event)
+        if (event.gui != null) TriggerType.GuiOpen.triggerAll(event)
     }
 
     @SubscribeEvent

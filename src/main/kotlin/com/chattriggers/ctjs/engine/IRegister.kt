@@ -120,8 +120,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerClicked(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.Clicked, getImplementationLoader())
+    fun registerClick(method: Any): RegularTrigger {
+        return RegularTrigger(method, TriggerType.Click, getImplementationLoader())
     }
 
     /**
@@ -138,8 +138,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerScrolled(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.Scrolled, getImplementationLoader())
+    fun registerScroll(method: Any): RegularTrigger {
+        return RegularTrigger(method, TriggerType.Scroll, getImplementationLoader())
     }
 
     /**
@@ -158,8 +158,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerDragged(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.Dragged, getImplementationLoader())
+    fun registerDrag(method: Any): RegularTrigger {
+        return RegularTrigger(method, TriggerType.Drag, getImplementationLoader())
     }
 
     /**
@@ -674,8 +674,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerGuiOpened(method: Any): EventTrigger {
-        return EventTrigger(method, TriggerType.GuiOpened, getImplementationLoader())
+    fun registerGuiOpen(method: Any): EventTrigger {
+        return EventTrigger(method, TriggerType.GuiOpen, getImplementationLoader())
     }
 
     /**
@@ -690,8 +690,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerGuiClosed(method: Any): RegularTrigger {
-        return RegularTrigger(method, TriggerType.GuiClosed, getImplementationLoader())
+    fun registerGuiClose(method: Any): RegularTrigger {
+        return RegularTrigger(method, TriggerType.GuiClose, getImplementationLoader())
     }
 
     /**
@@ -709,7 +709,7 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerPlayerJoined(method: Any): RegularTrigger {
+    fun registerPlayerJoin(method: Any): RegularTrigger {
         return RegularTrigger(method, TriggerType.PlayerJoin, getImplementationLoader())
     }
 
@@ -728,7 +728,7 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerPlayerLeft(method: Any): RegularTrigger {
+    fun registerPlayerLeave(method: Any): RegularTrigger {
         return RegularTrigger(method, TriggerType.PlayerLeave, getImplementationLoader())
     }
 
@@ -1032,8 +1032,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerChatComponentClicked(method: Any): EventTrigger {
-        return EventTrigger(method, TriggerType.ChatComponentClicked, getImplementationLoader())
+    fun registerChatComponentClick(method: Any): EventTrigger {
+        return EventTrigger(method, TriggerType.ChatComponentClick, getImplementationLoader())
     }
 
     /**
@@ -1050,8 +1050,8 @@ interface IRegister {
      * @param method The method to call when the event is fired
      * @return The trigger for additional modification
      */
-    fun registerChatComponentHovered(method: Any): EventTrigger {
-        return EventTrigger(method, TriggerType.ChatComponentHovered, getImplementationLoader())
+    fun registerChatComponentHover(method: Any): EventTrigger {
+        return EventTrigger(method, TriggerType.ChatComponentHover, getImplementationLoader())
     }
 
     /**
