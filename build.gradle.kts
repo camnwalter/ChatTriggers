@@ -51,7 +51,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("gg.essential:essential-$platform:2666")
+    modCompileOnly("gg.essential:essential-$platform:2666") {
+        exclude(module="forge")
+    }
 
     if (isForge && mcMinor <= 12)
         embed("gg.essential:loader-launchwrapper:1.1.3")

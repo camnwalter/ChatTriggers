@@ -40,7 +40,6 @@ class Command(
     }
 
     fun unregister() {
-        activeCommands.remove(this)
         trigger.unregister()
         EssentialAPI.getCommandRegistry().unregisterCommand(this)
     }

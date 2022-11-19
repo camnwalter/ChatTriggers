@@ -22,12 +22,13 @@ import kotlin.math.roundToInt
 //#if MC<=11202
 import net.minecraftforge.client.ClientCommandHandler
 //#else
-//$$ import com.chattriggers.ctjs.CTJS
 //$$ import net.minecraft.ChatFormatting
 //$$ import net.minecraft.client.GuiMessage
 //$$ import net.minecraft.network.chat.Component
+//$$ import net.minecraft.network.chat.MutableComponent
 //$$ import net.minecraft.network.chat.Style
 //$$ import net.minecraft.network.chat.TextColor
+//$$ import net.minecraft.network.chat.TextComponent
 //$$ import net.minecraft.util.FormattedCharSequence
 //$$ import net.minecraft.util.FormattedCharSink
 //#endif
@@ -548,7 +549,7 @@ object ChatLib {
     //$$             builder.append(formatString(style))
     //$$         }
     //$$
-    //$$         builder.append(codePoint.toChar())
+    //$$         builder.appendCodePoint(codePoint)
     //$$         return true
     //$$     }
     //$$
@@ -575,6 +576,50 @@ object ChatLib {
     //$$         private val colorToFormatChar = ChatFormatting.values().mapNotNull { format ->
     //$$             TextColor.fromLegacyFormat(format)?.let { it to format }
     //$$         }.toMap()
+    //$$     }
+    //$$ }
+    //$$
+    //$$ @JvmStatic
+    //$$ fun formattedCharSequenceToComponent(sequence: FormattedCharSequence): Component {
+    //$$       val builder = ComponentBuilder()
+    //$$       sequence.accept(builder)
+    //$$
+    //$$       val component = TextComponent("")
+    //$$       builder.components.forEach(component::append)
+    //$$       builder.components.forEach { println(it) }
+    //$$       println("----- gap ------")
+    //$$
+    //$$       if (builder.builder.isNotEmpty()) {
+    //$$           val temp = TextComponent(builder.builder.toString())
+    //$$           temp.style = builder.cachedStyle
+    //$$           println(temp)
+    //$$           component.append(temp)
+    //$$       }
+    //$$
+    //$$       return UTextComponent(component)
+    //$$ }
+    //$$
+    //$$ private class ComponentBuilder : FormattedCharSink {
+    //$$     val builder = StringBuilder()
+    //$$     var cachedStyle = Style.EMPTY
+    //$$     val components = mutableListOf<Component>()
+    //$$
+    //$$     override fun accept(index: Int, style: Style, codePoint: Int): Boolean {
+    //$$         println("\nouter style: $style\ncached: $cachedStyle")
+    //$$
+    //$$         if (style != cachedStyle) {
+    //$$             cachedStyle = style
+    //$$             if (builder.isNotEmpty()) {
+    //$$                 val comp = TextComponent(builder.toString())
+    //$$                 comp.style = style
+    //$$                 println("inner style: " + style)
+    //$$                 components.add(comp)
+    //$$                 builder.clear()
+    //$$             }
+    //$$         }
+    //$$         builder.appendCodePoint(codePoint)
+    //$$
+    //$$         return true
     //$$     }
     //$$ }
     //#endif

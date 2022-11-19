@@ -43,6 +43,7 @@ object Reference {
         KeyBind.clearKeyBinds()
 
         Command.activeCommands.forEach(Command::unregister)
+        Command.activeCommands.clear()
 
         Client.scheduleTask {
             CTJS.images.forEach {
