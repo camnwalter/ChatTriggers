@@ -3,10 +3,11 @@ package com.chattriggers.ctjs.triggers
 import com.chattriggers.ctjs.engine.ILoader
 import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.minecraft.libs.EventLib
+import com.chattriggers.ctjs.utils.kotlin.MCITextComponent
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import org.mozilla.javascript.regexp.NativeRegExp
 
-class ChatTrigger(method: Any, type: TriggerType, loader: ILoader) : Trigger(method, type, loader) {
+class ChatTrigger(method: Any, type: TriggerType, loader: ILoader, private val clientSide: Boolean) : Trigger(method, type, loader) {
     private lateinit var chatCriteria: Any
     private var formatted: Boolean = false
     private var caseInsensitive: Boolean = false
@@ -165,13 +166,27 @@ class ChatTrigger(method: Any, type: TriggerType, loader: ILoader) : Trigger(met
      * @param args list of arguments as described
      */
     override fun trigger(args: Array<out Any?>) {
-        require(args[0] is String && args[1] is ClientChatReceivedEvent) {
-            "Argument 1 must be a String, Argument 2 must be a ClientChatReceivedEvent"
+        require(args[0] is String && args[1] is ClientChatReceivedEvent && args[2] is Boolean) {
+            "Argument 1 must be a String, Argument 2 must be a ClientChatReceivedEvent," +
+                    "Argument 3 must be a Boolean"
         }
 
         val chatEvent = args[1] as ClientChatReceivedEvent
+        val isClientSideTriggered = args[2] as Boolean
 
-        if (!triggerIfCanceled && chatEvent.isCanceled) return
+        if (!triggerIfCanceled && chatEvent.isCanceled || clientSide != isClientSideTriggered) {
+            return
+        }
+
+        // If the user has a client side chat trigger, it will trigger at both the ASM point
+        // and in ClientListener for "normal" chats (not client-only). So, to fix it firing twice, we store
+        // the previous chat component to check if we have already seen it, and ignore if we have a duplicate.
+        if (prevChatComponent === chatEvent.message) {
+            prevChatComponent = null
+            return
+        }
+
+        prevChatComponent = chatEvent.message
 
         val chatMessage = getChatMessage(chatEvent, args[0] as String)
 
@@ -245,5 +260,9 @@ class ChatTrigger(method: Any, type: TriggerType, loader: ILoader) : Trigger(met
                     param.names.any { it.lowercase() == name }
                 }
         }
+    }
+
+    companion object {
+        private var prevChatComponent: MCITextComponent? = null
     }
 }

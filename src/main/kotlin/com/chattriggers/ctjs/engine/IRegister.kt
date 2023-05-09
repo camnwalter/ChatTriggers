@@ -48,7 +48,7 @@ interface IRegister {
     }
 
     /**
-     * Registers a new trigger that runs before a chat message is received.
+     * Registers a new trigger that runs before a server-side chat message is received.
      *
      * Passes through multiple arguments:
      * - Any number of chat criteria variables
@@ -64,7 +64,27 @@ interface IRegister {
      * @return The trigger for additional modification
      */
     fun registerChat(method: Any): ChatTrigger {
-        return ChatTrigger(method, TriggerType.Chat, getImplementationLoader())
+        return ChatTrigger(method, TriggerType.Chat, getImplementationLoader(), false)
+    }
+
+    /**
+     * Registers a new trigger that runs before a client-side chat message is received.
+     *
+     * Passes through multiple arguments:
+     * - Any number of chat criteria variables
+     * - The chat event, which can be cancelled
+     *
+     * Available modifications:
+     * - [ChatTrigger.triggerIfCanceled] Sets if triggered if event is already cancelled
+     * - [ChatTrigger.setChatCriteria] Sets the chat criteria
+     * - [ChatTrigger.setParameter] Sets the chat parameter
+     * - [Trigger.setPriority] Sets the priority
+     *
+     * @param method The method to call when the event is fired
+     * @return The trigger for additional modification
+     */
+    fun registerClientSideChat(method: Any): ChatTrigger {
+        return ChatTrigger(method, TriggerType.Chat, getImplementationLoader(), true)
     }
 
     /**
@@ -84,7 +104,7 @@ interface IRegister {
      * @return The trigger for additional modification
      */
     fun registerActionBar(method: Any): ChatTrigger {
-        return ChatTrigger(method, TriggerType.ActionBar, getImplementationLoader())
+        return ChatTrigger(method, TriggerType.ActionBar, getImplementationLoader(), false)
     }
 
     /**
